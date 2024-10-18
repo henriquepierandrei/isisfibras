@@ -1,5 +1,6 @@
 package com.pierandrei.isisfibras.Model.EmployeeModels;
 
+import com.pierandrei.isisfibras.Enuns.RolesEmployee;
 import com.pierandrei.isisfibras.Enuns.StatusEnum;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -24,6 +25,9 @@ public class ShippingRecordModel {
     private StatusEnum status; // Status do envio (PENDING, PREPARING, SENT, DELIVERED, CANCELED)
 
     private String registrationCodeEmployee; // Código de registro do funcionário responsável pelo envio
+
+    @Enumerated(EnumType.STRING)
+    private RolesEmployee rolesEmployee; // Cargo específico
 
     // Campos adicionais
     private LocalDateTime deliveredAt; // Data e hora em que o pedido foi entregue
