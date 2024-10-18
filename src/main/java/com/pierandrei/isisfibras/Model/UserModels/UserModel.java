@@ -37,5 +37,11 @@ public class UserModel {
 
     boolean receivePromotions;
 
+    @ManyToOne
+    private AddressModel addressModel;
+
+    @ManyToOne
+    private CartModel cartModel;
+
 
 }
