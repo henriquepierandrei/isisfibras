@@ -27,7 +27,7 @@ public class ShippingRecordModel {
     private String registrationCodeEmployee; // Código de registro do funcionário responsável pelo envio
 
     @Enumerated(EnumType.STRING)
-    private RolesEmployee rolesEmployee; // Cargo específico
+    private RolesEmployee rolesEmployee; // Cargo
 
     // Campos adicionais
     private LocalDateTime deliveredAt; // Data e hora em que o pedido foi entregue
