@@ -1,6 +1,6 @@
 package com.pierandrei.isisfibras.Model.EmployeeModels;
 
-import com.pierandrei.isisfibras.Enuns.RolesEmployee;
+import com.pierandrei.isisfibras.Enuns.RolesUsers;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -23,7 +23,7 @@ public class EmployeeModel {
     private String password;        // Senha
 
     @Enumerated(EnumType.STRING)
-    private RolesEmployee position; // Enum com as posições como SUPPORT, LOGISTICS_MANAGER, etc.
+    private RolesUsers position; // Enum com as posições como SUPPORT, LOGISTICS_MANAGER, etc.
 
     private String registrationCode; // Código de registro do funcionário
 

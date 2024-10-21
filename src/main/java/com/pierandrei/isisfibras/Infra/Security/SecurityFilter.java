@@ -1,6 +1,5 @@
 package com.pierandrei.isisfibras.Infra.Security;
 
-
 import com.pierandrei.isisfibras.Model.UserModels.UserModel;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -29,8 +28,12 @@ public class SecurityFilter extends OncePerRequestFilter {
             UserModel user = authentication.loadUserByEmail(email);
             var authorities = authentication.getAuthoritiesForUser(user);
 
-            var authentication = new UsernamePasswordAuthenticationToken(user, null, authorities);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            var authToken = new UsernamePasswordAuthenticationToken(user, null, authorities);
+            SecurityContextHolder.getContext().setAuthentication(authToken);
+        } else {
+            // Se o token não for válido, retorna um erro 401 Unauthorized
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Erro com a validação do token!");
+            return; // Interrompe a execução do filtro
         }
         filterChain.doFilter(request, response);
     }

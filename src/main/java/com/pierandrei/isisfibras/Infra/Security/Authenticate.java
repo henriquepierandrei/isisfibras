@@ -1,9 +1,7 @@
 package com.pierandrei.isisfibras.Infra.Security;
 
-import com.pierandrei.isisfibras.Enuns.RolesEmployee;
-import com.pierandrei.isisfibras.Model.EmployeeModels.EmployeeModel;
+import com.pierandrei.isisfibras.Enuns.RolesUsers;
 import com.pierandrei.isisfibras.Model.UserModels.UserModel;
-import com.pierandrei.isisfibras.Repository.EmployeeRepository;
 import com.pierandrei.isisfibras.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,14 +16,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class Authenticate implements UserDetailsService {
-    private final EmployeeRepository employeeRepository;
     private final UserRepository userRepository;
-
-    // Carrega Employee por username
-    public EmployeeModel loadEmployeeByUsername(String username) {
-        return employeeRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuário/Senha incorretos!"));
-    }
 
     // Carrega User por email
     public UserModel loadUserByEmail(String email) {
@@ -33,13 +24,14 @@ public class Authenticate implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário/Senha incorretos!"));
     }
 
-    // Autoridades para o Employee
-    public List<SimpleGrantedAuthority> getAuthoritiesForEmployee(EmployeeModel employeeModel) {
+    // Autoridades para o User
+    public List<SimpleGrantedAuthority> getAuthoritiesForUser(UserModel userModel) {
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
 
-        RolesEmployee position = employeeModel.getPosition();
+        RolesUsers position = userModel.getRolesUsers();
         if (position != null) {
             switch (position) {
+                case USUARIO -> authorities.add(new SimpleGrantedAuthority("ROLE_USUARIO"));
                 case OPERADOR -> authorities.add(new SimpleGrantedAuthority("ROLE_OPERADOR"));
                 case EMBALADOR -> authorities.add(new SimpleGrantedAuthority("ROLE_EMBALADOR"));
                 case GERENTE_LOGISTICO -> authorities.add(new SimpleGrantedAuthority("ROLE_GERENTE_LOGISTICO"));
@@ -49,13 +41,6 @@ public class Authenticate implements UserDetailsService {
             }
         }
 
-        return authorities;
-    }
-
-    // Autoridades para o User
-    public List<SimpleGrantedAuthority> getAuthoritiesForUser(UserModel userModel) {
-        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
         return authorities;
     }
 

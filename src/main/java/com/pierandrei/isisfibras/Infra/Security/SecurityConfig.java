@@ -29,12 +29,13 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/auth/**").permitAll()
-                        .requestMatchers("/user/**").hasRole("USER")
+                        .requestMatchers("/user/**").hasRole("USUARIO")
                         .requestMatchers("/operador/**").hasRole("OPERADOR")
                         .requestMatchers("/embalador/**").hasRole("EMBALADOR")
                         .requestMatchers("/gerente-logistico/**").hasRole("GERENTE_LOGISTICO")
                         .requestMatchers("/suporte/**").hasRole("SUPORTE")
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/**/**").hasRole("ADMIN")
+
 
                         .anyRequest().authenticated()
                 )

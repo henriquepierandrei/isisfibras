@@ -1,5 +1,6 @@
 package com.pierandrei.isisfibras.Model.UserModels;
 
+import com.pierandrei.isisfibras.Enuns.RolesUsers;
 import com.pierandrei.isisfibras.Model.LogisticModels.OrdersModel;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -59,5 +60,8 @@ public class UserModel {
 
     @OneToMany
     private List<OrdersModel> orders;  // Relacionamento com histórico de pedidos
+
+    @Enumerated(EnumType.STRING)
+    private RolesUsers rolesUsers;
 
 }
