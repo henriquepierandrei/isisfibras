@@ -36,7 +36,6 @@ public class Authenticate implements UserDetailsService {
     // Autoridades para o Employee
     public List<SimpleGrantedAuthority> getAuthoritiesForEmployee(EmployeeModel employeeModel) {
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 
         RolesEmployee position = employeeModel.getPosition();
         if (position != null) {

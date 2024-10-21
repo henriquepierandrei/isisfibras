@@ -12,6 +12,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -22,7 +23,7 @@ public class AuthService {
     private final TokenService tokenService;
 
     // Login do usuario
-    private LoginResponse loginAuth(String email, String password){
+    public LoginResponse loginAuth(String email, String password){
         Optional<UserModel> userModelOptional = this.userRepository.findByEmail(email);
         if (userModelOptional.isEmpty() || !passwordEncoder.matches(password, userModelOptional.get().getPassword())) {
             throw new BadCredentialsException("Usuário não encontrado!");
@@ -35,7 +36,7 @@ public class AuthService {
 
 
     // Registro do usuario
-    private RegisterResponse registerAuth(RegisterDto registerDto){
+    public RegisterResponse registerAuth(RegisterDto registerDto){
         Optional<UserModel> userModelOptional = this.userRepository.findByEmail(registerDto.email());
         if (userModelOptional.isPresent()) throw new UserAlreadyExistAuthenticationException("Esse email já está em uso!");
 
@@ -45,6 +46,14 @@ public class AuthService {
         userModel.setName(registerDto.name());
         userModel.setEmail(registerDto.email());
         userModel.setPassword(passwordEncoder.encode(registerDto.password()));
-        userModel.set
+        userModel.setDateBorn(registerDto.dateBorn());
+        userModel.setCpf(registerDto.cpf());
+        userModel.setCreatedAt(LocalDateTime.now());
+        this.userRepository.save(userModel);
+
+        String token = tokenService.generateToken(userModel);
+
+
+        return new RegisterResponse(registerDto.name(), userModel.getId(), userModel.getEmail(), token);
     }
 }

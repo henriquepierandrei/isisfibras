@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -28,6 +29,10 @@ public class UserModel {
     @Column(unique = true)
     @NotBlank
     private String phone;
+
+
+    @NotBlank
+    private LocalDate dateBorn;       // Idade
 
     @Column(unique = true)
     @NotBlank
