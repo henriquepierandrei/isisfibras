@@ -90,7 +90,6 @@ public class AdminService {
     }
 
 
-
     // Obter Lista de usuários de acordo com sua ROLE
     public PaginatedUsersResponse getUsersByRole(RolesUsers rolesUsers, int page, int size) {
         // Cria um objeto Pageable
@@ -108,6 +107,9 @@ public class AdminService {
         // Retorna a resposta paginada
         return new PaginatedUsersResponse(usersByRoleResponses, userPage.getTotalPages(), userPage.getTotalElements());
     }
+
+
+
 
 
 }

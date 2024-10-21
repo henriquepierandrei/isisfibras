@@ -4,6 +4,8 @@ import com.pierandrei.isisfibras.Dto.Auth.LoginResponse;
 import com.pierandrei.isisfibras.Dto.Auth.RegisterDto;
 import com.pierandrei.isisfibras.Dto.Auth.RegisterResponse;
 import com.pierandrei.isisfibras.Exception.Auth.UserAlreadyExistAuthenticationException;
+import com.pierandrei.isisfibras.Model.UserModels.UserModel;
+import com.pierandrei.isisfibras.Repository.UserRepository;
 import com.pierandrei.isisfibras.Service.UserServices.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,16 +15,26 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/auth")
 @Validated
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
+    private final UserRepository userRepository;
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> loginUser(@RequestParam(value = "email") String email,
                                                    @RequestParam(value = "password") String password) {
+
+        Optional<UserModel> userModelOptional = this.userRepository.findByEmail(email);
+        userModelOptional.get().setLastLoginAt(LocalDateTime.now());
+        this.userRepository.save(userModelOptional.get());
+
+
         try {
             // Chama o método de autenticação no serviço
             LoginResponse response = authService.loginAuth(email, password);
