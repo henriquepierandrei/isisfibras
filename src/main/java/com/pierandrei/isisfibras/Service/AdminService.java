@@ -1,5 +1,7 @@
 package com.pierandrei.isisfibras.Service;
 
+import com.pierandrei.isisfibras.Dto.Admin.PaginatedUsersResponse;
+import com.pierandrei.isisfibras.Dto.Admin.UsersByRoleResponse;
 import com.pierandrei.isisfibras.Enuns.RolesUsers;
 import com.pierandrei.isisfibras.Exception.Auth.UserNotFoundException;
 import com.pierandrei.isisfibras.Exception.UserNotUnauthorizedException;
@@ -8,12 +10,17 @@ import com.pierandrei.isisfibras.Model.UserModels.UserModel;
 import com.pierandrei.isisfibras.Repository.RoleHistoricChangeRepository;
 import com.pierandrei.isisfibras.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +29,7 @@ public class AdminService {
     private final RoleHistoricChangeRepository roleHistoricChangeRepository;
 
     // Definir ROLE ao usuário
-    private String changeRole(UUID idAdmin, UUID idUser, RolesUsers rolesUsers) {
+    public String changeRole(UUID idAdmin, UUID idUser, RolesUsers rolesUsers) {
         Optional<UserModel> userModelOptional = this.userRepository.findById(idUser);
         if (userModelOptional.isEmpty()) {
             throw new BadCredentialsException("Usuário inexistente!");
@@ -58,7 +65,7 @@ public class AdminService {
 
 
     // Deletar Usuário no Banco de Dados
-    private String deleteUser(UUID idAdmin, UUID idUser) throws UserNotFoundException {
+    public String deleteUser(UUID idAdmin, UUID idUser) throws UserNotFoundException {
         // Verifica se o usuário a ser deletado existe
         Optional<UserModel> userModelOptional = this.userRepository.findById(idUser);
         if (userModelOptional.isEmpty()) {
@@ -80,6 +87,26 @@ public class AdminService {
         this.userRepository.delete(userModelOptional.get());
 
         return "Usuário: ID: [" + userModelOptional.get().getId() + "] removido!";
+    }
+
+
+
+    // Obter Lista de usuários de acordo com sua ROLE
+    public PaginatedUsersResponse getUsersByRole(RolesUsers rolesUsers, int page, int size) {
+        // Cria um objeto Pageable
+        Pageable pageable = PageRequest.of(page, size);
+
+        // Busca a página de usuários com a ROLE especificada
+        Page<UserModel> userPage = this.userRepository.findByRolesUsers(rolesUsers, pageable);
+
+        // Mapeia os usuários encontrados para o formato de resposta desejado
+        List<UsersByRoleResponse> usersByRoleResponses = userPage.getContent()
+                .stream()
+                .map(user -> new UsersByRoleResponse(user.getId(), user.getEmail(), user.getPhone(),  user.getRolesUsers()))
+                .collect(Collectors.toList());
+
+        // Retorna a resposta paginada
+        return new PaginatedUsersResponse(usersByRoleResponses, userPage.getTotalPages(), userPage.getTotalElements());
     }
 
 
