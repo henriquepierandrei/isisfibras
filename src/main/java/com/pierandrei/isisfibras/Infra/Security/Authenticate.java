@@ -45,6 +45,7 @@ public class Authenticate implements UserDetailsService {
                 case EMBALADOR -> authorities.add(new SimpleGrantedAuthority("ROLE_EMBALADOR"));
                 case GERENTE_LOGISTICO -> authorities.add(new SimpleGrantedAuthority("ROLE_GERENTE_LOGISTICO"));
                 case SUPORTE -> authorities.add(new SimpleGrantedAuthority("ROLE_SUPORTE"));
+                case ADMIN -> authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
                 default -> throw new IllegalArgumentException("Posição não reconhecida: " + position);
             }
         }
