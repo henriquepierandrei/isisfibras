@@ -1,6 +1,7 @@
 package com.pierandrei.isisfibras.Service;
 
 import com.pierandrei.isisfibras.Enuns.RolesUsers;
+import com.pierandrei.isisfibras.Exception.Auth.UserNotFoundException;
 import com.pierandrei.isisfibras.Exception.UserNotUnauthorizedException;
 import com.pierandrei.isisfibras.Model.Historic.RoleHistoricChange;
 import com.pierandrei.isisfibras.Model.UserModels.UserModel;
@@ -54,5 +55,32 @@ public class AdminService {
 
         return "Posição mudada para: " + rolesUsers;
     }
+
+
+    // Deletar Usuário no Banco de Dados
+    private String deleteUser(UUID idAdmin, UUID idUser) throws UserNotFoundException {
+        // Verifica se o usuário a ser deletado existe
+        Optional<UserModel> userModelOptional = this.userRepository.findById(idUser);
+        if (userModelOptional.isEmpty()) {
+            throw new UserNotFoundException("Usuário inexistente!");
+        }
+
+        // Verifica se o administrador existe
+        Optional<UserModel> adminModelOptional = this.userRepository.findById(idAdmin);
+        if (adminModelOptional.isEmpty()) {
+            throw new UserNotFoundException("Admin inexistente!");
+        }
+
+        // Verifica se o administrador tem a permissão para deletar
+        if (adminModelOptional.get().getRolesUsers() != RolesUsers.ADMIN) {
+            throw new UserNotUnauthorizedException("Você não tem permissão para deletar usuários!");
+        }
+
+        // Realiza a deleção
+        this.userRepository.delete(userModelOptional.get());
+
+        return "Usuário: ID: [" + userModelOptional.get().getId() + "] removido!";
+    }
+
 
 }
