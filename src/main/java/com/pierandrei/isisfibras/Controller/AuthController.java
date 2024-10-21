@@ -32,7 +32,7 @@ public class AuthController {
         } catch (BadCredentialsException ex) {
             // Se as credenciais estiverem erradas, retorna 401 Unauthorized
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new LoginResponse(null, null, null)); // Ajuste se necessário para retorno vazio
+                    .body(new LoginResponse(null, null, null, "Credenciais erradas!")); // Ajuste se necessário para retorno vazio
         }
     }
 
@@ -49,7 +49,7 @@ public class AuthController {
         } catch (UserAlreadyExistAuthenticationException ex) {
             // Se o email ou CPF já existir, retorna 409 Conflict
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(new RegisterResponse(null, null, null, null)); // Ajuste conforme necessário
+                    .body(new RegisterResponse(null, null, null, "Email ou CPF já cadastrados", null)); // Ajuste conforme necessário
         }
     }
 

@@ -6,6 +6,7 @@ public record RegisterResponse(
         String name,
         UUID idUser,
         String email,
+        String message,
         String token
 ) {
 }
