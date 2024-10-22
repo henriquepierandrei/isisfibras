@@ -55,6 +55,7 @@ public class AuthController {
         try {
             // Chama o método de registro no serviço
             RegisterResponse response = authService.registerAuth(registerDto);
+            System.out.println("chamasdk");
 
             // Retorna 201 Created com o objeto RegisterResponse
             return ResponseEntity.status(HttpStatus.CREATED).body(response);

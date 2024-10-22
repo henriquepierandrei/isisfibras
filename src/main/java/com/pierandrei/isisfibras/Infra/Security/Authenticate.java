@@ -11,45 +11,41 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class Authenticate implements UserDetailsService {
+public class Authenticate {
     private final UserRepository userRepository;
 
-    // Carrega User por email
     public UserModel loadUserByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuário/Senha incorretos!"));
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado!"));
     }
 
-    // Autoridades para o User
-    public List<SimpleGrantedAuthority> getAuthoritiesForUser(UserModel userModel) {
+    public List<SimpleGrantedAuthority> getAuthorities(UserModel user) {
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
 
-        RolesUsers position = userModel.getRolesUsers();
-        if (position != null) {
-            switch (position) {
-                case USUARIO -> authorities.add(new SimpleGrantedAuthority("ROLE_USUARIO"));
-                case OPERADOR -> authorities.add(new SimpleGrantedAuthority("ROLE_OPERADOR"));
-                case GERENTE_LOGISTICO -> authorities.add(new SimpleGrantedAuthority("ROLE_GERENTE_LOGISTICO"));
-                case SUPORTE -> authorities.add(new SimpleGrantedAuthority("ROLE_SUPORTE"));
-                case ADMIN -> authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-                default -> throw new IllegalArgumentException("Posição não reconhecida: " + position);
-            }
+        if (user.getRolesUsers() == RolesUsers.USUARIO) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_USUARIO"));
+        }
+        if (user.getRolesUsers() == RolesUsers.ADMIN) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        }
+        if (user.getRolesUsers() == RolesUsers.SUPORTE) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_SUPORTE"));
+        }
+        if (user.getRolesUsers() == RolesUsers.GERENTE_LOGISTICO) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_GERENTE_LOGISTICO"));
+        }
+        if (user.getRolesUsers() == RolesUsers.OPERADOR) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_OPERADOR"));
         }
 
+
+
         return authorities;
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        // Carrega o User por email
-        UserModel user = loadUserByEmail(email);
-        // Obtém as autoridades
-        var authorities = getAuthoritiesForUser(user);
-
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), authorities);
     }
 }

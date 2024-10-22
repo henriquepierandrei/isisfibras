@@ -66,6 +66,7 @@ public class AuthService {
 
         String token = tokenService.generateToken(userModel);
 
+
         return new RegisterResponse(registerDto.name(), userModel.getId(),userModel.getEmail(),"Registro bem-sucedido!", token);
     }
 

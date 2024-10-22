@@ -1,6 +1,7 @@
 package com.pierandrei.isisfibras.Infra.Security;
 
 import lombok.RequiredArgsConstructor;
+import com.pierandrei.isisfibras.Infra.Security.SecurityFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -11,13 +12,16 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+    private final CustomUserDetails userDetails;
     private final SecurityFilter securityFilter;
 
 
@@ -29,20 +33,18 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/auth/**").permitAll()
-                        .requestMatchers("/user/**").hasRole("USUARIO")
+                        .requestMatchers("/user/**").hasRole("USUARIO") // Permitir ADMIN e USUARIO
                         .requestMatchers("/operador/**").hasRole("OPERADOR")
                         .requestMatchers("/gerente-logistico/**").hasRole("GERENTE_LOGISTICO")
                         .requestMatchers("/suporte/**").hasRole("SUPORTE")
-                        .requestMatchers("/**/**").hasRole("ADMIN")
-
-
-                        .anyRequest().authenticated()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .anyRequest().authenticated() // Deve estar por último
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
 
-
         return http.build();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
