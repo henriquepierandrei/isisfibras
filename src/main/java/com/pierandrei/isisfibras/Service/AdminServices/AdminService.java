@@ -1,4 +1,4 @@
-package com.pierandrei.isisfibras.Service;
+package com.pierandrei.isisfibras.Service.AdminServices;
 
 import com.pierandrei.isisfibras.Dto.Admin.PaginatedUsersResponse;
 import com.pierandrei.isisfibras.Dto.Admin.UsersByRoleResponse;

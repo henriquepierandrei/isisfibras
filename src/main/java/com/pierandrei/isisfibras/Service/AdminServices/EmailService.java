@@ -1,4 +1,4 @@
-package com.pierandrei.isisfibras.Service;
+package com.pierandrei.isisfibras.Service.AdminServices;
 
 import com.pierandrei.isisfibras.Model.UserModels.UserModel;
 import com.pierandrei.isisfibras.Repository.UserRepository;

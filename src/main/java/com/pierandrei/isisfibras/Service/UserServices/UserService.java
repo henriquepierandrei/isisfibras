@@ -8,6 +8,7 @@ import com.pierandrei.isisfibras.Model.UserModels.CartModel;
 import com.pierandrei.isisfibras.Model.UserModels.UserModel;
 import com.pierandrei.isisfibras.Repository.CartRepository;
 import com.pierandrei.isisfibras.Repository.ProductRepository;
+import com.pierandrei.isisfibras.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +20,10 @@ import java.util.Optional;
 public class UserService {
     private final ProductRepository productRepository;
     private CartRepository cartRepository;
+    private UserRepository userRepository;
 
     // Adicionar produto no carrinho de compras
-    public void addProductInCart(UserModel userModel, String skuProduct, int quantity) throws ProductNotAvailableException, UserNotUnauthorizedException {
+    public String addProductInCart(UserModel userModel, String skuProduct, int quantity) throws ProductNotAvailableException, UserNotUnauthorizedException {
         if (userModel == null) {
             throw new UserNotUnauthorizedException("Você não possui nenhuma conta logada!");
         }
@@ -54,6 +56,15 @@ public class UserService {
 
         // Salvar o carrinho atualizado no repositório
         this.cartRepository.save(cartModel);
+        return "Produto adicionado ao carrinho!";
+    }
+
+
+    // Adicionar telefone à conta
+    public String addPhoneForUser(String phone){
+        if (this.userRepository.existsByPhone(phone)){
+            throw new PhoneExistsException("Telefone já existente!");
+        }
     }
 
 

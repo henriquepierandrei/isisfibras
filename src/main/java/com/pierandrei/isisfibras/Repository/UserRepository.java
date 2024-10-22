@@ -18,4 +18,6 @@ public interface UserRepository extends JpaRepository<UserModel, UUID> {
     Page<UserModel> findByRolesUsers(RolesUsers rolesUsers, Pageable pageable);
 
     List<UserModel> findByReceivePromotions(boolean b);
+
+    boolean existsByPhone(String phone);
 }
