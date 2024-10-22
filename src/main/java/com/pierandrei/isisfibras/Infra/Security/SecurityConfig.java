@@ -31,7 +31,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/auth/**").permitAll()
                         .requestMatchers("/user/**").hasRole("USUARIO")
                         .requestMatchers("/operador/**").hasRole("OPERADOR")
-                        .requestMatchers("/embalador/**").hasRole("EMBALADOR")
                         .requestMatchers("/gerente-logistico/**").hasRole("GERENTE_LOGISTICO")
                         .requestMatchers("/suporte/**").hasRole("SUPORTE")
                         .requestMatchers("/**/**").hasRole("ADMIN")

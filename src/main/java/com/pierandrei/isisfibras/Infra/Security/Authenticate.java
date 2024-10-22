@@ -33,7 +33,6 @@ public class Authenticate implements UserDetailsService {
             switch (position) {
                 case USUARIO -> authorities.add(new SimpleGrantedAuthority("ROLE_USUARIO"));
                 case OPERADOR -> authorities.add(new SimpleGrantedAuthority("ROLE_OPERADOR"));
-                case EMBALADOR -> authorities.add(new SimpleGrantedAuthority("ROLE_EMBALADOR"));
                 case GERENTE_LOGISTICO -> authorities.add(new SimpleGrantedAuthority("ROLE_GERENTE_LOGISTICO"));
                 case SUPORTE -> authorities.add(new SimpleGrantedAuthority("ROLE_SUPORTE"));
                 case ADMIN -> authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
