@@ -19,7 +19,7 @@ public class CartModel {
     private UUID idUser;
 
     // Lista de produtos adicionados ao carrinho
-    @OneToMany(cascade = CascadeType.ALL)
+    @ElementCollection
     private List<ProductOrder> productOrders = new ArrayList<>();
 
     @NotBlank

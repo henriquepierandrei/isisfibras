@@ -1,10 +1,7 @@
 package com.pierandrei.isisfibras.Model.LogisticModels;
 
 import com.pierandrei.isisfibras.Enuns.CategoriesEnum;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -54,5 +51,6 @@ public class ProductsModel {
 
     private LocalDateTime updatedAt;  // Data da última atualização do produto
 
-    private List<ProductReviewModel> productReviews;  // Lista de avaliações do produto
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ProductReviewModel> reviews; // Adicionando a lista de avaliações
 }

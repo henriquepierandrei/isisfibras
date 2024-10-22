@@ -31,16 +31,15 @@ public class UserModel {
     @NotBlank
     private String phone;
 
-
     @NotBlank
-    private LocalDate dateBorn;       // Idade
+    private LocalDate dateBorn; // Idade
 
     @Column(unique = true)
     @NotBlank
     private String cpf;
 
     @NotBlank
-    private String name;  // Nome completo do usuário
+    private String name; // Nome completo do usuário
 
     private LocalDateTime createdAt;
 
@@ -48,9 +47,9 @@ public class UserModel {
 
     private boolean receivePromotions;
 
-    private boolean isActive;  // Flag para indicar se a conta está ativa
+    private boolean isActive; // Flag para indicar se a conta está ativa
 
-    private boolean isBanned;  // Flag para indicar se o usuário está banido
+    private boolean isBanned; // Flag para indicar se o usuário está banido
 
     @ManyToOne
     private AddressModel addressModel;
@@ -58,10 +57,9 @@ public class UserModel {
     @OneToOne
     private CartModel cartModel;
 
-    @OneToMany
-    private List<OrdersModel> orders;  // Relacionamento com histórico de pedidos
+    @OneToMany(mappedBy = "userModel") // Agora referenciando corretamente o campo 'userModel'
+    private List<OrdersModel> orders; // Relacionamento com histórico de pedidos
 
     @Enumerated(EnumType.STRING)
     private RolesUsers rolesUsers;
-
 }

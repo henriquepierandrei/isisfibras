@@ -1,5 +1,6 @@
 package com.pierandrei.isisfibras.Model.LogisticModels;
 
+import com.pierandrei.isisfibras.Model.UserModels.UserModel;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
@@ -13,27 +14,33 @@ public class OrdersModel {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID idOrder;
 
-    @OneToMany
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderItemModel> orderItems;
 
     private double totalPrice;
 
-    private UUID idBuyer; // ID do comprador (pode referenciar o `UserModel`)
+    @ManyToOne
+    @JoinColumn(name = "buyer_id", nullable = false)
+    private UserModel buyer; // Altere para 'buyer' se estiver usando esse nome
 
-    private LocalDateTime buyedAt; // Data da compra
+    @ManyToOne // Relacionamento com UserModel
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserModel userModel; // Adicionando o relacionamento com UserModel
 
-    private String trackingCode; // Código de rastreamento
+    private LocalDateTime buyedAt;
 
-    private boolean freeShipping; // Indica se o frete é gratuito
+    private String trackingCode;
 
-    private LocalDateTime deliveredAt; // Data de entrega
+    private boolean freeShipping;
+
+    private LocalDateTime deliveredAt;
 
     @ManyToOne
-    private CouponModel coupon; // Relacionamento com o cupom aplicado
+    private CouponModel coupon;
 
-    private String orderCode; // Código da ordem
+    private String orderCode;
 
-    private double discountPrice; // Preço com desconto aplicado
+    private double discountPrice;
 
-    private boolean haveCoupon; // Indica se há um cupom aplicado
+    private boolean haveCoupon;
 }

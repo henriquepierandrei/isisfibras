@@ -6,7 +6,9 @@ import com.pierandrei.isisfibras.Dto.Auth.RegisterResponse;
 import com.pierandrei.isisfibras.Enuns.RolesUsers;
 import com.pierandrei.isisfibras.Exception.AuthExceptions.UserAlreadyExistAuthenticationException;
 import com.pierandrei.isisfibras.Infra.Security.TokenService;
+import com.pierandrei.isisfibras.Model.UserModels.CartModel;
 import com.pierandrei.isisfibras.Model.UserModels.UserModel;
+import com.pierandrei.isisfibras.Repository.CartRepository;
 import com.pierandrei.isisfibras.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -21,6 +23,7 @@ import java.util.Optional;
 public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CartRepository cartRepository;
     private final TokenService tokenService;
 
     // Login do usuario
@@ -54,6 +57,12 @@ public class AuthService {
         userModel.setCpf(registerDto.cpf());
         userModel.setCreatedAt(LocalDateTime.now());
         this.userRepository.save(userModel);
+
+
+        CartModel cartModel = new CartModel();
+        cartModel.setIdUser(userModel.getId());
+        this.cartRepository.save(cartModel);
+
 
         String token = tokenService.generateToken(userModel);
 

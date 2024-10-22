@@ -2,6 +2,8 @@ package com.pierandrei.isisfibras.Model.LogisticModels;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -35,4 +37,8 @@ public class ProductReviewModel {
     private String reply;  // Resposta da loja à avaliação, se aplicável
 
     private String status;  // Status da avaliação (ex: ACTIVE, PENDING, REMOVED)
+
+    @ManyToOne // Adicionando o mapeamento de volta para o produto
+    @JoinColumn(name = "product_sku", nullable = false)
+    private ProductsModel product; // Referência ao produto
 }
