@@ -51,6 +51,9 @@ public class AuthService {
         UserModel userModel = new UserModel();
         userModel.setName(registerDto.name());
         userModel.setEmail(registerDto.email());
+
+        String token = tokenService.generateToken(userModel);
+
         userModel.setRolesUsers(RolesUsers.USUARIO);
         userModel.setPassword(passwordEncoder.encode(registerDto.password()));
         userModel.setDateBorn(registerDto.dateBorn());
@@ -64,7 +67,7 @@ public class AuthService {
         this.cartRepository.save(cartModel);
 
 
-        String token = tokenService.generateToken(userModel);
+
 
 
         return new RegisterResponse(registerDto.name(), userModel.getId(),userModel.getEmail(),"Registro bem-sucedido!", token);

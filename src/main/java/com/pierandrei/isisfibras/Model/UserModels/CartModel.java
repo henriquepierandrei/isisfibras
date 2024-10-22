@@ -22,7 +22,7 @@ public class CartModel {
     @ElementCollection
     private List<ProductOrder> productOrders = new ArrayList<>();
 
-    @NotBlank
+
     private double totalPrice;  // Preço total do carrinho
 
     private double totalDiscount;  // Desconto total aplicado

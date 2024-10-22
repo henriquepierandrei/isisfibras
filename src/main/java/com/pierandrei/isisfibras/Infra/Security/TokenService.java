@@ -11,45 +11,41 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-
 @Service
 public class TokenService {
+
     @Value("${api.security.token.secret}")
     private String secret;
 
-    private static final String ISSUER = "isisfibras"; // Constante para o issuer
-
-    // Gera um token JWT para o usuário
     public String generateToken(UserModel user) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
 
-            return JWT.create()
-                    .withIssuer(ISSUER)
+            String token = JWT.create()
+                    .withIssuer("IsisFibras")
                     .withSubject(user.getEmail())
                     .withExpiresAt(this.generateExpirationDate())
                     .sign(algorithm);
+            return token;
         } catch (JWTCreationException exception) {
-            throw new RuntimeException("Erro durante a geração do token: ", exception);
+            throw new RuntimeException("Error while generating token", exception);
         }
     }
 
-    // Gera a data de expiração do token (2 horas a partir de agora)
-    private Instant generateExpirationDate() {
-        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00")); // Considere tornar isso configurável
+    private Instant generateExpirationDate(){
+        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
     }
 
-    // Valida o token JWT e retorna o email do usuário se válido
     public String validateToken(String token) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm)
-                    .withIssuer(ISSUER)
+                    .withIssuer("IsisFibras")
                     .build()
                     .verify(token)
                     .getSubject();
         } catch (JWTVerificationException exception) {
-            throw new RuntimeException("Token inválido ou expirado: ", exception); // Lançando exceção específica
+            return null;
         }
     }
 }
