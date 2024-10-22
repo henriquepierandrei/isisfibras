@@ -1,6 +1,7 @@
 package com.pierandrei.isisfibras.Service;
 
 import com.pierandrei.isisfibras.Model.UserModels.UserModel;
+import com.pierandrei.isisfibras.Repository.UserRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -8,10 +9,23 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class EmailService {
     private final JavaMailSender javaMailSender;
+    private final UserRepository userRepository;
+
+
+    // Enviar email de promoção para usuários com a permissão de envio de promoção ativo.
+    public void sendEmailPromotionsToUser(String title, String content, String linkImageOffer, String principalLink) {
+        List<UserModel> userModels = this.userRepository.findByReceivePromotions(true);
+        for (UserModel userModel : userModels) {
+            sendEmail(title, userModel.getName(), content, linkImageOffer, principalLink, userModel.getEmail());
+        }
+    }
+
 
     public void sendEmail(String title, String name, String content, String linkImageOffer, String principalLink, String emailTo) {
         try {

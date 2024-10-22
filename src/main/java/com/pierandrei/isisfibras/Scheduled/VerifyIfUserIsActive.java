@@ -45,8 +45,5 @@ public class VerifyIfUserIsActive {
 
 
 
-    // Enviar email de promoção para usuários com a permissão de envio de promoção ativo.
-    public void sendEmailPromotionsToUser(String skuProuct, String title, String content){
 
-    }
 }
