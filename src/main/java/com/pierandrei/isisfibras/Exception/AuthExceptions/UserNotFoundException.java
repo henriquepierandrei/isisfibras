@@ -1,4 +1,4 @@
-package com.pierandrei.isisfibras.Exception.Auth;
+package com.pierandrei.isisfibras.Exception.AuthExceptions;
 
 import javax.naming.AuthenticationException;
 

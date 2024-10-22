@@ -14,8 +14,6 @@ public class CouponModel {
 
     private String name;  // Nome descritivo do cupom
 
-    private String typeDiscount;  // Percentual ou valor fixo
-
     private double valuePerCentDiscount;  // Valor percentual de desconto (0 a 100)
 
     private boolean freeShipping;  // Indica se o frete é gratuito

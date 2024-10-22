@@ -3,7 +3,7 @@ package com.pierandrei.isisfibras.Controller;
 import com.pierandrei.isisfibras.Dto.Auth.LoginResponse;
 import com.pierandrei.isisfibras.Dto.Auth.RegisterDto;
 import com.pierandrei.isisfibras.Dto.Auth.RegisterResponse;
-import com.pierandrei.isisfibras.Exception.Auth.UserAlreadyExistAuthenticationException;
+import com.pierandrei.isisfibras.Exception.AuthExceptions.UserAlreadyExistAuthenticationException;
 import com.pierandrei.isisfibras.Model.UserModels.UserModel;
 import com.pierandrei.isisfibras.Repository.UserRepository;
 import com.pierandrei.isisfibras.Service.UserServices.AuthService;

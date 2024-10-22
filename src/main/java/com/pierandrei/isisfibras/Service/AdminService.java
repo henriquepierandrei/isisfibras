@@ -3,7 +3,7 @@ package com.pierandrei.isisfibras.Service;
 import com.pierandrei.isisfibras.Dto.Admin.PaginatedUsersResponse;
 import com.pierandrei.isisfibras.Dto.Admin.UsersByRoleResponse;
 import com.pierandrei.isisfibras.Enuns.RolesUsers;
-import com.pierandrei.isisfibras.Exception.Auth.UserNotFoundException;
+import com.pierandrei.isisfibras.Exception.AuthExceptions.UserNotFoundException;
 import com.pierandrei.isisfibras.Exception.UserNotUnauthorizedException;
 import com.pierandrei.isisfibras.Model.Historic.RoleHistoricChange;
 import com.pierandrei.isisfibras.Model.UserModels.UserModel;
@@ -109,7 +109,6 @@ public class AdminService {
     }
 
 
-
-
+    // Obter Lista de usuários de acordo com
 
 }

@@ -32,11 +32,6 @@ public class ProductsModel {
     @NotBlank
     private double price;  // Preço do produto
 
-    @NotBlank
-    private String size;  // Tamanho (se aplicável, ex: vestuário, calçados)
-
-    @NotBlank
-    private double weight;  // Peso do produto
 
     @NotBlank
     @Enumerated(EnumType.STRING)

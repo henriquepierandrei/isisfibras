@@ -1,12 +1,14 @@
 package com.pierandrei.isisfibras.Model.UserModels;
 
 import com.pierandrei.isisfibras.Model.LogisticModels.CouponModel;
+import com.pierandrei.isisfibras.Model.LogisticModels.ProductOrder;
 import com.pierandrei.isisfibras.Model.LogisticModels.ProductsModel;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,8 +19,8 @@ public class CartModel {
     private UUID idUser;
 
     // Lista de produtos adicionados ao carrinho
-    @OneToMany
-    private List<ProductsModel> products;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<ProductOrder> productOrders = new ArrayList<>();
 
     @NotBlank
     private double totalPrice;  // Preço total do carrinho

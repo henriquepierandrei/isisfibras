@@ -1,4 +1,4 @@
-package com.pierandrei.isisfibras.Exception.Auth;
+package com.pierandrei.isisfibras.Exception.AuthExceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
