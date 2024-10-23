@@ -23,6 +23,8 @@ public class ProductsModel {
     @NotBlank
     private List<String> imagesUrls;  // URLs das imagens do produto
 
+    private String imageUrlPrincipal;    // URL da imagem principal do produto
+
     @NotBlank
     private int quantity;  // Quantidade disponível em estoque
 

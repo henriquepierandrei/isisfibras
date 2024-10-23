@@ -71,6 +71,10 @@ public class UserService {
     }
 
 
+
+
+
+
     // Adicionar telefone à conta
     public String addPhoneForUser(String code, UUID idUser) throws UserPrincipalNotFoundException, CodeNotExistsException, PhoneExistsException {
         Optional<UserModel> userModelOpt = this.userRepository.findById(idUser);

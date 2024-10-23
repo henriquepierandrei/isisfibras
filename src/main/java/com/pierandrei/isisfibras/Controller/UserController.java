@@ -10,6 +10,7 @@ import com.pierandrei.isisfibras.Service.UserServices.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +23,7 @@ public class UserController {
     private final UserService service;
 
 
+    @PreAuthorize("hasRole('USER'")
     @GetMapping("/send")
     public ResponseEntity<String> sendTest(@RequestParam("phone") String phone, @AuthenticationPrincipal UserModel userModel) {
         try {
@@ -37,7 +39,7 @@ public class UserController {
         }
     }
 
-
+    @PreAuthorize("hasRole('USER'")
     @PostMapping("/addphone")
     public ResponseEntity<String> addPhone(@RequestParam("code") String code, @AuthenticationPrincipal UserModel userModel) {
         try {
