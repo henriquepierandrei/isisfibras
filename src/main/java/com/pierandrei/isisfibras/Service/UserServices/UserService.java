@@ -73,28 +73,36 @@ public class UserService {
 
     // Adicionar telefone à conta
     public String addPhoneForUser(String code, UUID idUser) throws UserPrincipalNotFoundException, CodeNotExistsException, PhoneExistsException {
+        Optional<UserModel> userModelOpt = this.userRepository.findById(idUser);
 
-        Optional<UserModel> userModel = this.userRepository.findById(idUser);
-        if (!userModel.isPresent()) throw new UserPrincipalNotFoundException("Não existe nenhum usuário!");
+        if (!userModelOpt.isPresent()) {
+            throw new UserPrincipalNotFoundException("Não existe nenhum usuário!");
+        }
 
+        UserModel userModel = userModelOpt.get(); // Obter o modelo do usuário
 
-        if (this.userRepository.existsByPhone(userModel.get().getPossiblePhone())){
+        // Verifica se o telefone já está cadastrado
+        if (this.userRepository.existsByPhone(userModel.getPossiblePhone())) {
             throw new PhoneExistsException("Telefone já cadastrado");
         }
 
-        if (userModel.get().getPossiblePhone() == null || userModel.get().getPossiblePhone().isEmpty()) {
+        // Valida se o possível telefone é nulo ou vazio
+        if (userModel.getPossiblePhone() == null || userModel.getPossiblePhone().isEmpty()) {
             throw new PhoneExistsException("Número de telefone não pode ser nulo ou vazio.");
         }
 
-
-        if (code.equals(userModel.get().getCodeVerification())){
-            userModel.get().setPhone(userModel.get().getPossiblePhone());
-            userModel.get().setPossiblePhone(null);
-            this.userRepository.save(userModel.get());
+        // Verifica se o código fornecido está correto
+        if (code.equals(userModel.getCodeVerification())) {
+            userModel.setPhone("+"+userModel.getPossiblePhone()); // Atualiza o telefone
+            userModel.setPossiblePhone(null);
+            userModel.setCodeVerification(null);// Limpa o possível telefone
+            this.userRepository.save(userModel); // Salva as alterações
             return "Telefone Cadastrado!";
         }
+
         throw new CodeNotExistsException("Código incorreto!");
     }
+
 
     // Gerador do código e envio por SMS
     public String generateCode(UUID idUser, String phone) throws TimeLimitOfGenerationException, PhoneNotFoundException {
