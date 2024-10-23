@@ -35,24 +35,40 @@ public class LogisticsManagerService {
 
 
 
-    public ProductCreateResponseDto productCreate(UserModel userModel, ProductCreateDto productCreateDto){
-        if (userModel.getRolesUsers() !=  RolesUsers.GERENTE_LOGISTICO){
-            throw new UserNotUnauthorizedException("Você não está autorizado para adicioar um produto!");
+    public ProductCreateResponseDto productCreate(UserModel userModel, ProductCreateDto productCreateDto) throws Exception {
+        // Verifica se o usuário tem a role adequada
+        if (userModel.getRolesUsers() != RolesUsers.GERENTE_LOGISTICO) {
+            throw new UserNotUnauthorizedException("Você não está autorizado para adicionar um produto!");
         }
 
-        ProductsModel productsModel = new ProductsModel();
-        productsModel.setSku(generateSku());
-        productsModel.setName(productCreateDto.name());
-        productsModel.setDescription(productCreateDto.description());
-        productsModel.setImagesUrls(productCreateDto.imageUrlsProduct());
-        productsModel.setImageUrlPrincipal(productCreateDto.imageUrlPrincipal());
-        productsModel.setQuantity(productCreateDto.quantity());
-        productsModel.setPrice(productCreateDto.price());
-        productsModel.setCategoriesEnum(productCreateDto.categoriesEnum());
-        productsModel.setShippingWeight(productCreateDto.weightProduct());
-        productsModel.setCreatedAt(LocalDateTime.now());
-        this.productRepository.save(productsModel);
-        return new ProductCreateResponseDto(productsModel.getSku(),LocalDateTime.now(),"Produto Cadastrado com Sucesso!");
+        try {
+            // Criação e configuração do produto
+            ProductsModel productsModel = new ProductsModel();
+            productsModel.setSku(generateSku());
+            productsModel.setName(productCreateDto.name());
+            productsModel.setDescription(productCreateDto.description());
+            productsModel.setImagesUrls(productCreateDto.imageUrlsProduct());
+            productsModel.setImageUrlPrincipal(productCreateDto.imageUrlPrincipal());
+            productsModel.setQuantity(productCreateDto.quantity());
+            productsModel.setPrice(productCreateDto.price());
+            productsModel.setCategoriesEnum(productCreateDto.categoriesEnum());
+            productsModel.setShippingWeight(productCreateDto.weightProduct());
+            if (productCreateDto.quantity()>1){
+                productsModel.setInStock(true);
+            }else{
+                productsModel.setInStock(false);
+            }
+            productsModel.setCreatedAt(LocalDateTime.now());
 
+            // Salva o produto no banco de dados
+            this.productRepository.save(productsModel);
+
+            // Retorna a resposta do sucesso
+            return new ProductCreateResponseDto(productsModel.getSku(), LocalDateTime.now(), "Produto Cadastrado com Sucesso!");
+        } catch (Exception e) {
+            // Lança uma nova exceção com uma mensagem mais clara sem expor a exceção original
+            throw new Exception("Erro ao criar produto: " + e.getMessage());
+        }
     }
+
 }

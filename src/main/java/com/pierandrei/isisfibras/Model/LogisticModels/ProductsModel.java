@@ -40,9 +40,9 @@ public class ProductsModel {
 
     private double discountPrice;  // Preço com desconto (se aplicável)
 
+    private int totalSellings=0;      // Quantidade de produto vendido
 
-
-    private double averageRating;  // Média das avaliações de 1 a 5 estrelas
+    private double averageRating=0;  // Média das avaliações de 1 a 5 estrelas
 
 
     private double shippingWeight;  // Peso usado para cálculo de frete
