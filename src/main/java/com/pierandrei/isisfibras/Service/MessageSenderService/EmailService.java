@@ -1,4 +1,4 @@
-package com.pierandrei.isisfibras.Service.AdminServices;
+package com.pierandrei.isisfibras.Service.MessageSenderService;
 
 import com.pierandrei.isisfibras.Model.UserModels.UserModel;
 import com.pierandrei.isisfibras.Repository.UserRepository;
@@ -14,8 +14,10 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class EmailService {
+
     private final JavaMailSender javaMailSender;
     private final UserRepository userRepository;
+
 
 
     // Enviar email de promoção para usuários com a permissão de envio de promoção ativo.
@@ -25,7 +27,6 @@ public class EmailService {
             sendEmail(title, userModel.getName(), content, linkImageOffer, principalLink, userModel.getEmail());
         }
     }
-
 
     public void sendEmail(String title, String name, String content, String linkImageOffer, String principalLink, String emailTo) {
         try {
@@ -97,7 +98,5 @@ public class EmailService {
             e.printStackTrace();
         }
     }
-
-
 
 }

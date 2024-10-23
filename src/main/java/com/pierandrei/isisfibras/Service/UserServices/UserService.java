@@ -1,5 +1,6 @@
 package com.pierandrei.isisfibras.Service.UserServices;
 
+import com.pierandrei.isisfibras.Exception.AuthExceptions.PhoneExistsException;
 import com.pierandrei.isisfibras.Exception.LogistcsExceptions.ProductNotAvailableException;
 import com.pierandrei.isisfibras.Exception.UserNotUnauthorizedException;
 import com.pierandrei.isisfibras.Model.LogisticModels.ProductOrder;
@@ -60,12 +61,12 @@ public class UserService {
     }
 
 
-    // Adicionar telefone à conta
-    public String addPhoneForUser(String phone){
-        if (this.userRepository.existsByPhone(phone)){
-            throw new PhoneExistsException("Telefone já existente!");
-        }
-    }
+//    // Adicionar telefone à conta
+//    public String addPhoneForUser(String phone){
+//        if (this.userRepository.existsByPhone(phone)){
+//            throw new PhoneExistsException("Telefone já existente!");
+//        }
+//    }
 
 
 }
