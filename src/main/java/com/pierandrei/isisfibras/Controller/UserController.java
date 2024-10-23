@@ -23,7 +23,7 @@ public class UserController {
     private final UserService service;
 
 
-    @PreAuthorize("hasRole('USER'")
+
     @GetMapping("/send")
     public ResponseEntity<String> sendTest(@RequestParam("phone") String phone, @AuthenticationPrincipal UserModel userModel) {
         try {
@@ -39,7 +39,7 @@ public class UserController {
         }
     }
 
-    @PreAuthorize("hasRole('USER'")
+
     @PostMapping("/addphone")
     public ResponseEntity<String> addPhone(@RequestParam("code") String code, @AuthenticationPrincipal UserModel userModel) {
         try {
