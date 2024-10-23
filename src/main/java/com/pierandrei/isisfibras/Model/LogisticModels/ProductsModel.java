@@ -40,12 +40,10 @@ public class ProductsModel {
 
     private double discountPrice;  // Preço com desconto (se aplicável)
 
-    private int daysGuarantee;  // Dias de garantia fornecidos
 
 
     private double averageRating;  // Média das avaliações de 1 a 5 estrelas
 
-    private boolean isFeatured;  // Indica se o produto está em destaque
 
     private double shippingWeight;  // Peso usado para cálculo de frete
 
