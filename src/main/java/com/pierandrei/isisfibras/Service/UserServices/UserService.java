@@ -1,6 +1,8 @@
 package com.pierandrei.isisfibras.Service.UserServices;
 
+import com.pierandrei.isisfibras.Exception.AuthExceptions.CodeNotExistsException;
 import com.pierandrei.isisfibras.Exception.AuthExceptions.PhoneExistsException;
+import com.pierandrei.isisfibras.Exception.AuthExceptions.TimeLimitOfGenerationException;
 import com.pierandrei.isisfibras.Exception.LogistcsExceptions.ProductNotAvailableException;
 import com.pierandrei.isisfibras.Exception.UserNotUnauthorizedException;
 import com.pierandrei.isisfibras.Model.LogisticModels.ProductOrder;
@@ -10,18 +12,25 @@ import com.pierandrei.isisfibras.Model.UserModels.UserModel;
 import com.pierandrei.isisfibras.Repository.CartRepository;
 import com.pierandrei.isisfibras.Repository.ProductRepository;
 import com.pierandrei.isisfibras.Repository.UserRepository;
+import com.pierandrei.isisfibras.Service.MessageSenderService.TwilioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.attribute.UserPrincipalNotFoundException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final ProductRepository productRepository;
-    private CartRepository cartRepository;
-    private UserRepository userRepository;
+    private final CartRepository cartRepository;
+    private final UserRepository userRepository;
+    private final TwilioService twilioService;
 
     // Adicionar produto no carrinho de compras
     public String addProductInCart(UserModel userModel, String skuProduct, int quantity) throws ProductNotAvailableException, UserNotUnauthorizedException {
@@ -61,12 +70,63 @@ public class UserService {
     }
 
 
-//    // Adicionar telefone à conta
-//    public String addPhoneForUser(String phone){
-//        if (this.userRepository.existsByPhone(phone)){
-//            throw new PhoneExistsException("Telefone já existente!");
-//        }
-//    }
+    // Adicionar telefone à conta
+    public String addPhoneForUser(String code, UUID idUser) throws UserPrincipalNotFoundException, CodeNotExistsException, PhoneExistsException {
+
+        Optional<UserModel> userModel = this.userRepository.findById(idUser);
+        if (!userModel.isPresent()) throw new UserPrincipalNotFoundException("Não existe nenhum usuário!");
+
+
+        if (this.userRepository.existsByPhone(userModel.get().getPossiblePhone())){
+            throw new PhoneExistsException("Telefone já cadastrado");
+        }
+
+        if (userModel.get().getPossiblePhone() == null || userModel.get().getPossiblePhone().isEmpty()) {
+            throw new PhoneExistsException("Número de telefone não pode ser nulo ou vazio.");
+        }
+
+
+        if (code.equals(userModel.get().getCodeVerification())){
+            userModel.get().setPhone(userModel.get().getPossiblePhone());
+            userModel.get().setPossiblePhone(null);
+            this.userRepository.save(userModel.get());
+            return "Telefone Cadastrado!";
+        }
+        throw new CodeNotExistsException("Código incorreto!");
+    }
+
+    // Gerador do código e envio por sms
+    public String generateCode(UUID idUser, String phone) throws TimeLimitOfGenerationException {
+        Random random = new Random();
+        Optional<UserModel> userModel = this.userRepository.findById(idUser);
+        if (!userModel.isPresent()) return null; // Verifica se o usuário foi encontrado
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        Duration duration = Duration.between(userModel.get().getCodeGeneratedAt(), LocalDateTime.now());
+        long minutes = duration.toMinutes() % 60;
+
+        // Lança exceção se o tempo de geração não for atendido
+        if (duration.toMinutes() < 5) {
+            throw new TimeLimitOfGenerationException("Espere 5 minutos para gerar o código novamente!");
+        }
+
+        // Gera o código de verificação
+        for (int i = 0; i < 5; i++) {
+            stringBuilder.append(random.nextInt(10));
+        }
+
+        // Atualiza o modelo do usuário com o código gerado
+        userModel.get().setCodeGeneratedAt(LocalDateTime.now());
+        userModel.get().setCodeVerification(stringBuilder.toString());
+        userModel.get().setPossiblePhone(phone);
+        this.userRepository.save(userModel.get());
+
+        // Envia o código por SMS
+        this.twilioService.sendMessage(phone, "Código de Verificação: " + stringBuilder.toString());
+        return "Código enviado!";
+    }
+
 
 
 }

@@ -1,5 +1,6 @@
 package com.pierandrei.isisfibras.Service.MessageSenderService;
 
+import com.pierandrei.isisfibras.Exception.AuthExceptions.PhoneNotFoundException;
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
@@ -25,7 +26,12 @@ public class TwilioService {
         Twilio.init(accountSid, authToken);
     }
 
-    public void sendMessage(String to, String body) {
+    public void sendMessage(String to, String body) throws PhoneNotFoundException {
+        // Verifica se o número de telefone é válido
+        if (to == null || to.isEmpty() || !isValidPhoneNumber(to)) {
+            throw new PhoneNotFoundException("Número de telefone não existe ou é inválido!");
+        }
+
         // Certifica-se de que Twilio está inicializado
         initializeTwilio();
 
@@ -36,5 +42,11 @@ public class TwilioService {
         ).create();
 
         System.out.println("Message sent: " + message.getSid());
+    }
+
+    // Método para verificar se o número de telefone é válido
+    private boolean isValidPhoneNumber(String phoneNumber) {
+        // Implementação de validação simples: pode incluir regex ou regras específicas
+        return phoneNumber.matches("\\+?[0-9]+"); // Exemplo: número deve ser composto apenas por dígitos
     }
 }

@@ -16,7 +16,7 @@ public class UserController {
 
     @GetMapping("/send")
     public String sendTest(){
-        this.service.sendMessage("32999701559", "Olá henrique!");
+        this.service.sendMessage("+5532999701559", "Olá Henrique!");
         return "Enviado";
     }
 }

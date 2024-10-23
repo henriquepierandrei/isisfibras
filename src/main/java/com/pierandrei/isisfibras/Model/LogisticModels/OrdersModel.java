@@ -1,5 +1,6 @@
 package com.pierandrei.isisfibras.Model.LogisticModels;
 
+import com.pierandrei.isisfibras.Model.UserModels.AddressModel;
 import com.pierandrei.isisfibras.Model.UserModels.UserModel;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -14,18 +15,17 @@ public class OrdersModel {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID idOrder;
 
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<OrderItemModel> orderItems;
+    private List<ProductOrder> orderItems;
 
     private double totalPrice;
 
-    @ManyToOne
-    @JoinColumn(name = "buyer_id", nullable = false)
-    private UserModel buyer; // Altere para 'buyer' se estiver usando esse nome
+    private UUID idUserOwner;
 
-    @ManyToOne // Relacionamento com UserModel
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserModel userModel; // Adicionando o relacionamento com UserModel
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private AddressModel addressModel;
+
 
     private LocalDateTime buyedAt;
 

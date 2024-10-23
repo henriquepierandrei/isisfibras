@@ -57,8 +57,10 @@ public class UserModel {
     @OneToOne
     private CartModel cartModel;
 
-    @OneToMany(mappedBy = "userModel", cascade = CascadeType.ALL, orphanRemoval = true) // Agora referenciando corretamente o campo 'userModel'
-    private List<OrdersModel> orders; // Relacionamento com histórico de pedidos
+    private String codeVerification;
+    private LocalDateTime codeGeneratedAt;
+    private String possiblePhone;
+
 
     @Enumerated(EnumType.STRING)
     private RolesUsers rolesUsers;
