@@ -28,9 +28,9 @@ public class TwilioService {
 
     public void sendMessage(String to, String body) throws PhoneNotFoundException {
         // Verifica se o número de telefone é válido
-        if (to == null || to.isEmpty() || !isValidPhoneNumber(to)) {
-            throw new PhoneNotFoundException("Número de telefone não existe ou é inválido!");
-        }
+//        if (to == null || to.isEmpty() || !isValidPhoneNumber(to)) {
+//            throw new PhoneNotFoundException("Número de telefone não existe ou é inválido!");
+//        }
 
         // Certifica-se de que Twilio está inicializado
         initializeTwilio();
@@ -46,7 +46,17 @@ public class TwilioService {
 
     // Método para verificar se o número de telefone é válido
     private boolean isValidPhoneNumber(String phoneNumber) {
-        // Implementação de validação simples: pode incluir regex ou regras específicas
-        return phoneNumber.matches("\\+?[0-9]+"); // Exemplo: número deve ser composto apenas por dígitos
+        // Remove caracteres não numéricos
+        String cleanedNumber = phoneNumber.replaceAll("\\D", "");
+
+        // Verifica se o número tem 10 ou 11 dígitos
+        if (cleanedNumber.length() == 10 || cleanedNumber.length() == 11) {
+            // Adiciona o prefixo +55
+            phoneNumber = "+55" + cleanedNumber;
+            return true; // Número é considerado válido
+        }
+
+        return false; // Número não é válido
     }
+
 }

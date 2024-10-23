@@ -2,6 +2,7 @@ package com.pierandrei.isisfibras.Service.UserServices;
 
 import com.pierandrei.isisfibras.Exception.AuthExceptions.CodeNotExistsException;
 import com.pierandrei.isisfibras.Exception.AuthExceptions.PhoneExistsException;
+import com.pierandrei.isisfibras.Exception.AuthExceptions.PhoneNotFoundException;
 import com.pierandrei.isisfibras.Exception.AuthExceptions.TimeLimitOfGenerationException;
 import com.pierandrei.isisfibras.Exception.LogistcsExceptions.ProductNotAvailableException;
 import com.pierandrei.isisfibras.Exception.UserNotUnauthorizedException;
@@ -95,37 +96,50 @@ public class UserService {
         throw new CodeNotExistsException("Código incorreto!");
     }
 
-    // Gerador do código e envio por sms
-    public String generateCode(UUID idUser, String phone) throws TimeLimitOfGenerationException {
+    // Gerador do código e envio por SMS
+    public String generateCode(UUID idUser, String phone) throws TimeLimitOfGenerationException, PhoneNotFoundException {
         Random random = new Random();
         Optional<UserModel> userModel = this.userRepository.findById(idUser);
-        if (!userModel.isPresent()) return null; // Verifica se o usuário foi encontrado
 
-        StringBuilder stringBuilder = new StringBuilder();
+        // Verifica se o usuário foi encontrado
+        if (!userModel.isPresent()) {
+            return null; // ou lançar uma exceção personalizada se preferir
+        }
 
-        Duration duration = Duration.between(userModel.get().getCodeGeneratedAt(), LocalDateTime.now());
-        long minutes = duration.toMinutes() % 60;
+        UserModel user = userModel.get(); // Obter o modelo de usuário
+        LocalDateTime now = LocalDateTime.now();
 
-        // Lança exceção se o tempo de geração não for atendido
-        if (duration.toMinutes() < 5) {
-            throw new TimeLimitOfGenerationException("Espere 5 minutos para gerar o código novamente!");
+        // Se codeGeneratedAt é nulo, inicializa e salva
+        if (user.getCodeGeneratedAt() == null) {
+            user.setCodeGeneratedAt(now);
+            this.userRepository.save(user);
+        } else {
+            // Calcula a duração desde o último código gerado
+            Duration duration = Duration.between(user.getCodeGeneratedAt(), now);
+
+            // Lança exceção se o tempo de geração não for atendido
+            if (duration.toMinutes() < 5) {
+                throw new TimeLimitOfGenerationException("Espere 5 minutos para gerar o código novamente!");
+            }
         }
 
         // Gera o código de verificação
+        StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < 5; i++) {
             stringBuilder.append(random.nextInt(10));
         }
 
-        // Atualiza o modelo do usuário com o código gerado
-        userModel.get().setCodeGeneratedAt(LocalDateTime.now());
-        userModel.get().setCodeVerification(stringBuilder.toString());
-        userModel.get().setPossiblePhone(phone);
-        this.userRepository.save(userModel.get());
+        // Atualiza o modelo do usuário com o novo código e a data atual
+        user.setCodeGeneratedAt(now); // Atualiza a data atual
+        user.setCodeVerification(stringBuilder.toString());
+        user.setPossiblePhone(phone);
+        this.userRepository.save(user); // Salva as mudanças no banco de dados
 
         // Envia o código por SMS
         this.twilioService.sendMessage(phone, "Código de Verificação: " + stringBuilder.toString());
         return "Código enviado!";
     }
+
 
 
 
