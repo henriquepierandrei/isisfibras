@@ -28,6 +28,12 @@ public class AdminService {
     private final UserRepository userRepository;
     private final RoleHistoricChangeRepository roleHistoricChangeRepository;
 
+    // Obter usuário através do ID
+    public Optional<UserModel> getUser(UUID id){
+        return this.userRepository.findById(id);
+    }
+
+
     // Definir ROLE ao usuário
     public String changeRole(UUID idAdmin, UUID idUser, RolesUsers rolesUsers) {
         Optional<UserModel> userModelOptional = this.userRepository.findById(idUser);
