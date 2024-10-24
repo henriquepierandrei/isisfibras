@@ -20,4 +20,6 @@ public interface UserRepository extends JpaRepository<UserModel, UUID> {
     List<UserModel> findByReceivePromotions(boolean b);
 
     boolean existsByPhone(String phone);
+
+    boolean existsByAccessCode(String string);
 }

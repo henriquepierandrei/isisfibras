@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -32,6 +33,34 @@ public class AdminService {
     public Optional<UserModel> getUser(UUID id){
         return this.userRepository.findById(id);
     }
+
+    // Gerar código de acesso
+    public String generateCode(UUID idOwner) {
+        Optional<UserModel> userModelOptional = this.userRepository.findById(idOwner);
+        if (userModelOptional.isEmpty()) {
+            throw new BadCredentialsException("Usuário inexistente!");
+        }
+
+        String accessCode;
+        do {
+            accessCode = generateRandomCode(6);
+        } while (this.userRepository.existsByAccessCode(accessCode));
+
+        userModelOptional.get().setAccessCode(accessCode);
+        this.userRepository.save(userModelOptional.get());
+        return accessCode;
+    }
+
+    // Método auxiliar para gerar código aleatório
+    private String generateRandomCode(int length) {
+        Random random = new Random();
+        StringBuilder codeCreation = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            codeCreation.append(random.nextInt(10));
+        }
+        return codeCreation.toString();
+    }
+
 
 
     // Definir ROLE ao usuário
