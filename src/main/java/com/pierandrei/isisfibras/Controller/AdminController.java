@@ -1,5 +1,6 @@
 package com.pierandrei.isisfibras.Controller;
 
+import com.pierandrei.isisfibras.Dto.Admin.UserResponse;
 import com.pierandrei.isisfibras.Enuns.RolesUsers;
 import com.pierandrei.isisfibras.Exception.AuthExceptions.UserNotFoundException;
 import com.pierandrei.isisfibras.Exception.UserNotUnauthorizedException;
@@ -21,7 +22,15 @@ public class AdminController {
     private final AdminService adminService;
 
 
+    // Obtém o usuário através do ID
+    @GetMapping("/user/{id}")
+    public ResponseEntity<UserResponse> getUserById(@PathVariable(value = "id") UUID id) throws UserNotFoundException {
+        UserResponse userResponse = this.adminService.getUserWithResponse(id);
+        return ResponseEntity.ok(userResponse);
+    }
 
+
+    // Atualizar a posicação do usuário através do ID
     @PutMapping("user/update/role/{id}")
     public ResponseEntity<String> updateRoleUser(@PathVariable(value = "id") UUID id,
                                                  @AuthenticationPrincipal UserModel userModel,

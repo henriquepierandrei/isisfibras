@@ -1,7 +1,7 @@
 package com.pierandrei.isisfibras.Service.AdminServices;
 
 import com.pierandrei.isisfibras.Dto.Admin.PaginatedUsersResponse;
-import com.pierandrei.isisfibras.Dto.Admin.UsersByRoleResponse;
+import com.pierandrei.isisfibras.Dto.Admin.UserResponse;
 import com.pierandrei.isisfibras.Enuns.RolesUsers;
 import com.pierandrei.isisfibras.Exception.AuthExceptions.UserNotFoundException;
 import com.pierandrei.isisfibras.Exception.UserNotUnauthorizedException;
@@ -29,9 +29,23 @@ public class AdminService {
     private final UserRepository userRepository;
     private final RoleHistoricChangeRepository roleHistoricChangeRepository;
 
+
     // Obter usuário através do ID
-    public Optional<UserModel> getUser(UUID id){
+    public Optional<UserModel> getUser(UUID id) throws UserNotFoundException {
         return this.userRepository.findById(id);
+
+    }
+
+
+    // Obtém e retorna em formato de DTO o usuário através do ID
+    public UserResponse getUserWithResponse(UUID id) throws UserNotFoundException {
+        Optional<UserModel> userModelOptional = this.userRepository.findById(id);
+        if (userModelOptional.isEmpty()) throw new UserNotFoundException("Usuário não existe!");
+
+        UserModel userModel = userModelOptional.get();
+        return new UserResponse(userModel.getId(),userModel.getEmail(), userModel.getPhone(), userModel.getRolesUsers());
+
+
     }
 
     // Gerar código de acesso
@@ -134,13 +148,13 @@ public class AdminService {
         Page<UserModel> userPage = this.userRepository.findByRolesUsers(rolesUsers, pageable);
 
         // Mapeia os usuários encontrados para o formato de resposta desejado
-        List<UsersByRoleResponse> usersByRoleResponses = userPage.getContent()
+        List<UserResponse> userRespons = userPage.getContent()
                 .stream()
-                .map(user -> new UsersByRoleResponse(user.getId(), user.getEmail(), user.getPhone(),  user.getRolesUsers()))
+                .map(user -> new UserResponse(user.getId(), user.getEmail(), user.getPhone(),  user.getRolesUsers()))
                 .collect(Collectors.toList());
 
         // Retorna a resposta paginada
-        return new PaginatedUsersResponse(usersByRoleResponses, userPage.getTotalPages(), userPage.getTotalElements());
+        return new PaginatedUsersResponse(userRespons, userPage.getTotalPages(), userPage.getTotalElements());
     }
 
 

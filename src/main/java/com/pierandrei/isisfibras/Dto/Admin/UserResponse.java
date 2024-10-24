@@ -4,7 +4,7 @@ import com.pierandrei.isisfibras.Enuns.RolesUsers;
 
 import java.util.UUID;
 
-public record UsersByRoleResponse(
+public record UserResponse(
         UUID id,
         String email,
         String phone,
