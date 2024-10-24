@@ -62,6 +62,9 @@ public class UserModel {
     private String possiblePhone;
 
 
+
+    private String accessCode;    // Código de acesso, não utilizado quando o usuário não faz parte da equipe, (ROLE_USER).
+
     @Enumerated(EnumType.STRING)
     private RolesUsers rolesUsers;
 }

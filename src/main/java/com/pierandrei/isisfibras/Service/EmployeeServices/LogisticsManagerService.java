@@ -40,9 +40,9 @@ public class LogisticsManagerService {
 
 
     // Cadastro de Produto
-    public ProductCreateResponseDto productCreate(UserModel userModel, ProductCreateDto productCreateDto) throws Exception {
+    public ProductCreateResponseDto productCreate(UserModel userModel, ProductCreateDto productCreateDto, String accessCode) throws Exception {
         // Verifica se o usuário tem a role adequada
-        if (userModel.getRolesUsers() != RolesUsers.GERENTE_LOGISTICO) {
+        if (userModel.getRolesUsers() != RolesUsers.GERENTE_LOGISTICO && !userModel.getAccessCode().equals(accessCode)) {
             throw new UserNotUnauthorizedException("Você não está autorizado para adicionar um produto!");
         }
 
@@ -83,12 +83,11 @@ public class LogisticsManagerService {
         }
     }
 
-
-    // Atualizar Produto em geral
-    public ProductCreateResponseDto productUpdate(UserModel userModel, ProductUpdateDto productUpdateDto) throws ProductNotAvailableException {
+    // Atualizar o produto
+    public ProductCreateResponseDto productUpdate(UserModel userModel, ProductUpdateDto productUpdateDto, String accessCode) throws ProductNotAvailableException {
         // Verifica se o usuário tem a role adequada
-        if (userModel.getRolesUsers() != RolesUsers.GERENTE_LOGISTICO) {
-            throw new UserNotUnauthorizedException("Você não está autorizado para adicionar um produto!");
+        if (userModel.getRolesUsers() != RolesUsers.GERENTE_LOGISTICO && !userModel.getAccessCode().equals(accessCode)) {
+            throw new UserNotUnauthorizedException("Você não está autorizado para atualizar um produto!");
         }
 
         Optional<ProductsModel> model = this.productRepository.findBySku(productUpdateDto.sku());
@@ -104,23 +103,19 @@ public class LogisticsManagerService {
         if (!productUpdateDto.categoriesEnum().toString().isEmpty()) model.get().setCategoriesEnum(productUpdateDto.categoriesEnum());
         if (productUpdateDto.weightProduct() != 0) model.get().setShippingWeight(productUpdateDto.weightProduct());
 
-        // Atualiza as URLs de imagens mantendo as existentes
+        // Atualiza as URLs de imagens mantendo as já existentes e removendo as que foram retiradas
         List<String> existingUrls = model.get().getImagesUrls();
-        List<String> newUrls = productUpdateDto.imageUrlsProduct();
+        List<String> updatedUrls = productUpdateDto.imageUrlsProduct(); // URLs que o usuário deseja manter
 
-        // Adiciona as novas URLs apenas se elas não já estiverem na lista existente
-        for (String newUrl : newUrls) {
-            if (!existingUrls.contains(newUrl)) {
-                existingUrls.add(newUrl);
-            }
-        }
+        // Remove as URLs que não estão na lista de URLs atualizadas
+        existingUrls.removeIf(url -> !updatedUrls.contains(url));
 
         // Atualiza a lista de URLs de imagens no produto
         model.get().setImagesUrls(existingUrls);
 
         // Atualiza a imagem principal, se uma nova foi fornecida
-        if (!newUrls.isEmpty() && newUrls.get(0) != null) {
-            model.get().setImageUrlPrincipal(newUrls.get(0));
+        if (!updatedUrls.isEmpty() && updatedUrls.get(0) != null) {
+            model.get().setImageUrlPrincipal(updatedUrls.get(0));
         }
 
         // Salva as alterações no banco de dados
@@ -129,6 +124,23 @@ public class LogisticsManagerService {
         // Retorna a resposta de atualização do produto
         return new ProductCreateResponseDto(model.get().getSku(), LocalDateTime.now(), "Produto atualizado com sucesso!");
     }
+
+    // Remover o produto
+    public String productDelete(UserModel userModel, String sku, String accessCode) throws ProductNotAvailableException {
+        // Verifica se o usuário tem a role adequada
+        if (userModel.getRolesUsers() != RolesUsers.GERENTE_LOGISTICO && !userModel.getAccessCode().equals(accessCode)) {
+            throw new UserNotUnauthorizedException("Você não está autorizado para remover um produto!");
+        }
+
+        Optional<ProductsModel> model = this.productRepository.findBySku(sku);
+        if (model.isEmpty()) {
+            throw new ProductNotAvailableException("Produto indisponível para remoção!");
+        }
+
+        this.productRepository.delete(model.get());
+        return "Produto SKU: [ "+sku+" ] removido!";
+    }
+
 
 
 
