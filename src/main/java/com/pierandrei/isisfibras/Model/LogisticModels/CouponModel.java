@@ -1,6 +1,8 @@
 package com.pierandrei.isisfibras.Model.LogisticModels;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Data;
 
@@ -10,7 +12,8 @@ import java.time.LocalDateTime;
 @Data
 public class CouponModel {
     @Id
-    private String couponCode;  // Código exclusivo do cupom
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
 
     private String name;  // Nome descritivo do cupom
 

@@ -30,24 +30,6 @@ public class AdminService {
     private final RoleHistoricChangeRepository roleHistoricChangeRepository;
 
 
-    // Obter usuário através do ID
-    public Optional<UserModel> getUser(UUID id) throws UserNotFoundException {
-        return this.userRepository.findById(id);
-
-    }
-
-
-    // Obtém e retorna em formato de DTO o usuário através do ID
-    public UserResponse getUserWithResponse(UUID id) throws UserNotFoundException {
-        Optional<UserModel> userModelOptional = this.userRepository.findById(id);
-        if (userModelOptional.isEmpty()) throw new UserNotFoundException("Usuário não existe!");
-
-        UserModel userModel = userModelOptional.get();
-        return new UserResponse(userModel.getId(),userModel.getEmail(), userModel.getPhone(), userModel.getRolesUsers());
-
-
-    }
-
     // Gerar código de acesso
     public String generateCode(UUID idOwner) {
         Optional<UserModel> userModelOptional = this.userRepository.findById(idOwner);
@@ -74,7 +56,6 @@ public class AdminService {
         }
         return codeCreation.toString();
     }
-
 
 
     // Definir ROLE ao usuário
@@ -113,6 +94,7 @@ public class AdminService {
     }
 
 
+
     // Deletar Usuário no Banco de Dados
     public String deleteUser(UUID idAdmin, UUID idUser) throws UserNotFoundException {
         // Verifica se o usuário a ser deletado existe
@@ -139,6 +121,25 @@ public class AdminService {
     }
 
 
+    // Obter usuário através do ID
+    public Optional<UserModel> getUser(UUID id) throws UserNotFoundException {
+        return this.userRepository.findById(id);
+
+    }
+
+
+    // Obtém e retorna em formato de DTO o usuário através do ID
+    public UserResponse getUserWithResponse(UUID id) throws UserNotFoundException {
+        Optional<UserModel> userModelOptional = this.userRepository.findById(id);
+        if (userModelOptional.isEmpty()) throw new UserNotFoundException("Usuário não existe!");
+
+        UserModel userModel = userModelOptional.get();
+        return new UserResponse(userModel.getId(),userModel.getEmail(), userModel.getPhone(), userModel.getRolesUsers());
+
+
+    }
+
+
     // Obter Lista de usuários de acordo com sua ROLE
     public PaginatedUsersResponse getUsersByRole(RolesUsers rolesUsers, int page, int size) {
         // Cria um objeto Pageable
@@ -157,6 +158,12 @@ public class AdminService {
         return new PaginatedUsersResponse(userRespons, userPage.getTotalPages(), userPage.getTotalElements());
     }
 
+
+
+    // Criar Cupom
+    public CouponCreateResponse createCoupon(){
+
+    }
 
 
 
