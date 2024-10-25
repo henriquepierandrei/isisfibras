@@ -29,6 +29,8 @@ public class ProductsModel {
     @NotNull
     private int quantity;  // Quantidade disponível em estoque
 
+    private boolean isExhausted;     // Se o produto está esgotado ( Ideal quando está sem estoque ou não se fabrica mais )
+
     @NotNull
     private double price;  // Preço do produto
 
