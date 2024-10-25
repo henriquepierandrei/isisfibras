@@ -1,5 +1,6 @@
 package com.pierandrei.isisfibras.Exception.AuthExceptions;
 
+import com.pierandrei.isisfibras.Exception.UserNotUnauthorizedException;
 import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,13 @@ public class ExceptionControllerAdvice {
         Map<String, String> error = new HashMap<>();
         error.put("error", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    @ExceptionHandler(UserNotUnauthorizedException.class)
+    public ResponseEntity<Map<String, String>> handleUserNotUnauthorizedException(UserNotUnauthorizedException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 
     @ExceptionHandler(Exception.class)
