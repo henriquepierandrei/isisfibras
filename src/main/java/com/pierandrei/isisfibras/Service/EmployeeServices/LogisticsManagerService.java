@@ -96,27 +96,33 @@ public class LogisticsManagerService {
         }
 
         // Atualiza os campos existentes se eles não estiverem vazios ou com valor zero
-        if (!productUpdateDto.name().isEmpty()) model.get().setName(productUpdateDto.name());
-        if (!productUpdateDto.description().isEmpty()) model.get().setDescription(productUpdateDto.description());
+        if (!productUpdateDto.name().toString().isEmpty()) model.get().setName(productUpdateDto.name());
+        if (productUpdateDto.description() != null) model.get().setDescription(productUpdateDto.description());
         if (productUpdateDto.quantity() != 0) model.get().setQuantity(productUpdateDto.quantity());
         if (productUpdateDto.price() != 0) model.get().setPrice(productUpdateDto.price());
-        if (!productUpdateDto.categoriesEnum().toString().isEmpty()) model.get().setCategoriesEnum(productUpdateDto.categoriesEnum());
+        if (productUpdateDto.categoriesEnum() != null) model.get().setCategoriesEnum(productUpdateDto.categoriesEnum());
         if (productUpdateDto.weightProduct() != 0) model.get().setShippingWeight(productUpdateDto.weightProduct());
 
         // Atualiza as URLs de imagens mantendo as já existentes e removendo as que foram retiradas
         List<String> existingUrls = model.get().getImagesUrls();
-        List<String> updatedUrls = productUpdateDto.imageUrlsProduct(); // URLs que o usuário deseja manter
 
-        // Remove as URLs que não estão na lista de URLs atualizadas
-        existingUrls.removeIf(url -> !updatedUrls.contains(url));
+        if (productUpdateDto.imageUrlsProduct() != null){
+            List<String> updatedUrls = productUpdateDto.imageUrlsProduct(); // URLs que o usuário deseja manter
 
-        // Atualiza a lista de URLs de imagens no produto
-        model.get().setImagesUrls(existingUrls);
+            // Remove as URLs que não estão na lista de URLs atualizadas
+            existingUrls.removeIf(url -> !updatedUrls.contains(url));
 
-        // Atualiza a imagem principal, se uma nova foi fornecida
-        if (!updatedUrls.isEmpty() && updatedUrls.get(0) != null) {
-            model.get().setImageUrlPrincipal(updatedUrls.get(0));
+            // Atualiza a lista de URLs de imagens no produto
+            model.get().setImagesUrls(existingUrls);
+
+            // Atualiza a imagem principal, se uma nova foi fornecida
+            if (!updatedUrls.isEmpty() && updatedUrls.get(0) != null) {
+                model.get().setImageUrlPrincipal(updatedUrls.get(0));
+            }
+
         }
+
+        model.get().setUpdatedAt(LocalDateTime.now());
 
         // Salva as alterações no banco de dados
         this.productRepository.save(model.get());
