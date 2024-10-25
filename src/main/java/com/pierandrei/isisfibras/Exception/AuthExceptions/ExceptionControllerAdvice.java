@@ -1,5 +1,6 @@
 package com.pierandrei.isisfibras.Exception.AuthExceptions;
 
+import com.pierandrei.isisfibras.Exception.LogistcsExceptions.ProductNotAvailableException;
 import com.pierandrei.isisfibras.Exception.UserNotUnauthorizedException;
 import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.springframework.dao.DataAccessException;
@@ -49,6 +50,13 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(DataAccessException.class)
     public ResponseEntity<Map<String, String>> handleDataAccessException(DataAccessException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(ProductNotAvailableException.class)
+    public ResponseEntity<Map<String, String>> ProductNotAvailableException(DataAccessException ex) {
         Map<String, String> error = new HashMap<>();
         error.put("error", ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);

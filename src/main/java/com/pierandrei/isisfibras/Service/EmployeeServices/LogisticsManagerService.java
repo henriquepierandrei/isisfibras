@@ -43,7 +43,6 @@ public class LogisticsManagerService {
     public ProductCreateResponseDto productCreate(UserModel userModel, ProductCreateDto productCreateDto, String accessCode) throws Exception {
         // Verifica se o usuário tem a role adequada
         if (userModel.getRolesUsers() != RolesUsers.GERENTE_LOGISTICO || !userModel.getAccessCode().equals(accessCode)) {
-
             throw new UserNotUnauthorizedException("Você não está autorizado para adicionar um produto!");
         }
 

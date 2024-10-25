@@ -30,19 +30,11 @@ public class ManagerController {
     public ResponseEntity<ProductCreateResponseDto> productCreateController(
             @AuthenticationPrincipal UserModel userModel,
             @RequestBody @Valid ProductCreateDto productCreateDto,
-            @RequestParam String accessCode) {
-        try {
-            // Chama o serviço para criar o produto
-            ProductCreateResponseDto response = this.logisticsManagerService.productCreate(userModel, productCreateDto, accessCode);
-            // Retorna uma resposta HTTP 201 (Created) em caso de sucesso, junto com os dados do produto criado
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (UserNotUnauthorizedException e) {
-            // Retorna uma resposta HTTP 403 (Forbidden) se o usuário não estiver autorizado
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
-        } catch (Exception e) {
-            // Retorna uma resposta HTTP 500 (Internal Server Error) em caso de erro inesperado
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+            @RequestParam String accessCode) throws Exception {
+        // Chama o serviço para criar o produto
+        ProductCreateResponseDto response = this.logisticsManagerService.productCreate(userModel, productCreateDto, accessCode);
+        // Retorna uma resposta HTTP 201 (Created) em caso de sucesso, junto com os dados do produto criado
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
 
@@ -51,38 +43,25 @@ public class ManagerController {
     public ResponseEntity<ProductCreateResponseDto> productUpdateController(
             @AuthenticationPrincipal UserModel userModel,
             @RequestBody @Valid ProductUpdateDto productUpdateDto,
-            @RequestParam String accessCode) {
-        try {
-            ProductCreateResponseDto response = logisticsManagerService.productUpdate(userModel, productUpdateDto, accessCode);
-            return ResponseEntity.ok(response);
-        } catch (UserNotUnauthorizedException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ProductCreateResponseDto(null, LocalDateTime.now(), e.getMessage()));
-        } catch (ProductNotAvailableException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ProductCreateResponseDto(null, LocalDateTime.now(), e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ProductCreateResponseDto(null, LocalDateTime.now(), "Erro inesperado: " + e.getMessage()));
-        }
+            @RequestParam String accessCode) throws ProductNotAvailableException {
+        // Chama o serviço para atualizar o produto
+        ProductCreateResponseDto response = logisticsManagerService.productUpdate(userModel, productUpdateDto, accessCode);
+        // Retorna uma resposta HTTP 200 (OK) com os dados do produto atualizado
+        return ResponseEntity.ok(response);
     }
+
 
     // Remoção do produto
     @DeleteMapping("product/delete/{sku}")
     public ResponseEntity<String> productDeleteController(
             @AuthenticationPrincipal UserModel userModel,
             @PathVariable String sku,
-            @RequestParam String accessCode) {
-        try {
-            String message = logisticsManagerService.productDelete(userModel, sku, accessCode);
-            return ResponseEntity.ok(message);
-        } catch (UserNotUnauthorizedException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
-        } catch (ProductNotAvailableException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro inesperado: " + e.getMessage());
-        }
+            @RequestParam String accessCode) throws ProductNotAvailableException {
+        // Chama o serviço para remover o produto
+        String message = logisticsManagerService.productDelete(userModel, sku, accessCode);
+        // Retorna uma resposta HTTP 200 (OK) com a mensagem de sucesso
+        return ResponseEntity.ok(message);
     }
-
-
 
 
 
