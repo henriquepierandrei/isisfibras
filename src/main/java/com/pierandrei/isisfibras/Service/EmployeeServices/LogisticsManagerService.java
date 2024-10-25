@@ -2,6 +2,7 @@ package com.pierandrei.isisfibras.Service.EmployeeServices;
 
 import com.pierandrei.isisfibras.Dto.LogistcsAndEmployeeDto.ProductCreateDto;
 import com.pierandrei.isisfibras.Dto.LogistcsAndEmployeeDto.ProductCreateResponseDto;
+import com.pierandrei.isisfibras.Dto.LogistcsAndEmployeeDto.ProductDeleteResponse;
 import com.pierandrei.isisfibras.Dto.LogistcsAndEmployeeDto.ProductUpdateDto;
 import com.pierandrei.isisfibras.Enuns.RolesUsers;
 import com.pierandrei.isisfibras.Exception.LogistcsExceptions.ProductNotAvailableException;
@@ -132,7 +133,7 @@ public class LogisticsManagerService {
     }
 
     // Remover o produto
-    public String productDelete(UserModel userModel, String sku, String accessCode) throws ProductNotAvailableException {
+    public ProductDeleteResponse productDelete(UserModel userModel, String sku, String accessCode) throws ProductNotAvailableException {
         // Verifica se o usuário tem a role adequada
         if (userModel.getRolesUsers() != RolesUsers.GERENTE_LOGISTICO && !userModel.getAccessCode().equals(accessCode)) {
             throw new UserNotUnauthorizedException("Você não está autorizado para remover um produto!");
@@ -140,11 +141,11 @@ public class LogisticsManagerService {
 
         Optional<ProductsModel> model = this.productRepository.findBySku(sku);
         if (model.isEmpty()) {
-            throw new ProductNotAvailableException("Produto indisponível para remoção!");
+            throw new ProductNotAvailableException("Produto indisponível para remoção, código sku incorreto ou não existe!");
         }
 
         this.productRepository.delete(model.get());
-        return "Produto SKU: [ "+sku+" ] removido!";
+        return new ProductDeleteResponse(sku, "Produto deletado!");
     }
 
 

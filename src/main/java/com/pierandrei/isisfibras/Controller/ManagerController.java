@@ -2,9 +2,9 @@ package com.pierandrei.isisfibras.Controller;
 
 import com.pierandrei.isisfibras.Dto.LogistcsAndEmployeeDto.ProductCreateDto;
 import com.pierandrei.isisfibras.Dto.LogistcsAndEmployeeDto.ProductCreateResponseDto;
+import com.pierandrei.isisfibras.Dto.LogistcsAndEmployeeDto.ProductDeleteResponse;
 import com.pierandrei.isisfibras.Dto.LogistcsAndEmployeeDto.ProductUpdateDto;
 import com.pierandrei.isisfibras.Exception.LogistcsExceptions.ProductNotAvailableException;
-import com.pierandrei.isisfibras.Exception.UserNotUnauthorizedException;
 import com.pierandrei.isisfibras.Model.UserModels.UserModel;
 import com.pierandrei.isisfibras.Service.EmployeeServices.LogisticsManagerService;
 import jakarta.validation.Valid;
@@ -14,8 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
 
 @RestController
 @RequiredArgsConstructor
@@ -53,14 +51,14 @@ public class ManagerController {
 
     // Remoção do produto
     @DeleteMapping("product/delete/{sku}")
-    public ResponseEntity<String> productDeleteController(
+    public ResponseEntity<ProductDeleteResponse> productDeleteController(
             @AuthenticationPrincipal UserModel userModel,
             @PathVariable String sku,
             @RequestParam String accessCode) throws ProductNotAvailableException {
         // Chama o serviço para remover o produto
-        String message = logisticsManagerService.productDelete(userModel, sku, accessCode);
+        ProductDeleteResponse productDeleteResponse = logisticsManagerService.productDelete(userModel, sku, accessCode);
         // Retorna uma resposta HTTP 200 (OK) com a mensagem de sucesso
-        return ResponseEntity.ok(message);
+        return ResponseEntity.ok(productDeleteResponse);
     }
 
 

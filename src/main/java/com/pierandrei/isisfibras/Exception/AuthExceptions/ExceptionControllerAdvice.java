@@ -56,10 +56,11 @@ public class ExceptionControllerAdvice {
     }
 
     @ExceptionHandler(ProductNotAvailableException.class)
-    public ResponseEntity<Map<String, String>> ProductNotAvailableException(DataAccessException ex) {
+    public ResponseEntity<Map<String, String>> handleProductNotAvailableException(ProductNotAvailableException ex) {
         Map<String, String> error = new HashMap<>();
         error.put("error", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
+
 
 }
