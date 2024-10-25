@@ -8,8 +8,10 @@ import com.pierandrei.isisfibras.Exception.LogistcsExceptions.ProductNotAvailabl
 import com.pierandrei.isisfibras.Exception.UserNotUnauthorizedException;
 import com.pierandrei.isisfibras.Model.LogisticModels.ProductOrder;
 import com.pierandrei.isisfibras.Model.LogisticModels.ProductsModel;
+import com.pierandrei.isisfibras.Model.UserModels.CartItems;
 import com.pierandrei.isisfibras.Model.UserModels.CartModel;
 import com.pierandrei.isisfibras.Model.UserModels.UserModel;
+import com.pierandrei.isisfibras.Repository.CartItemsRepository;
 import com.pierandrei.isisfibras.Repository.CartRepository;
 import com.pierandrei.isisfibras.Repository.ProductRepository;
 import com.pierandrei.isisfibras.Repository.UserRepository;
@@ -31,6 +33,7 @@ public class UserService {
     private final ProductRepository productRepository;
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
+    private final CartItemsRepository cartItemsRepository;
     private final TwilioService twilioService;
 
     // Adicionar produto no carrinho de compras
@@ -48,27 +51,38 @@ public class UserService {
         // Buscar o carrinho do usuário
         CartModel cartModel = this.cartRepository.findByIdUser(userModel.getId());
 
+        // Caso o carrinho ainda não exista, criar um novo para o usuário
+        if (cartModel == null) {
+            cartModel = new CartModel();
+            cartModel.setIdUser(userModel.getId());
+            cartModel.setTotalPrice(0.0);
+            cartModel.setTotalItems(0);
+            cartModel.setTotalDiscount(0.0);
+            cartModel.setSubTotal(0.0);
+        }
 
-        // Criar um novo pedido com SKU, nome e quantidade
-        ProductOrder productOrder = new ProductOrder();
-        productOrder.setQuantity(quantity);
-        productOrder.setName(productsModelOptional.get().getName()); // Usar o nome correto do produto
-        productOrder.setPrice(productsModelOptional.get().getPrice());
+        // Criar um novo item de carrinho com SKU e quantidade
+        CartItems cartItems = new CartItems();
+        cartItems.setSku(skuProduct);
+        cartItems.setQuantity(quantity);
+        this.cartItemsRepository.save(cartItems);
 
-        // Adicionar o pedido à lista de produtos do carrinho
-        List<ProductOrder> productOrders = cartModel.getProductOrders();
-        productOrders.add(productOrder);
-        cartModel.setProductOrders(productOrders);
+        // Adicionar o item ao carrinho
+        cartModel.getCartItems().add(cartItems);
 
         // Atualizar o preço total do carrinho
-        double totalPrice = cartModel.getTotalPrice();
-        totalPrice += productsModelOptional.get().getPrice() * quantity; // Multiplicar o preço pela quantidade
-        cartModel.setTotalPrice(totalPrice);
+        double itemTotalPrice = productsModelOptional.get().getPrice() * quantity;
+        cartModel.setTotalPrice(cartModel.getTotalPrice() + itemTotalPrice);
+
+        // Atualizar o número total de itens no carrinho
+        cartModel.setTotalItems(cartModel.getTotalItems() + quantity);
 
         // Salvar o carrinho atualizado no repositório
         this.cartRepository.save(cartModel);
+
         return "Produto adicionado ao carrinho!";
     }
+
 
 
 

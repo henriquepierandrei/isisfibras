@@ -46,7 +46,7 @@ public class ManagerController {
     }
 
 
-
+    // Atualização do produto
     @PutMapping("/product/update")
     public ResponseEntity<ProductCreateResponseDto> productUpdateController(
             @AuthenticationPrincipal UserModel userModel,
@@ -64,7 +64,7 @@ public class ManagerController {
         }
     }
 
-
+    // Remoção do produto
     @DeleteMapping("product/delete/{sku}")
     public ResponseEntity<String> productDeleteController(
             @AuthenticationPrincipal UserModel userModel,
@@ -81,6 +81,9 @@ public class ManagerController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro inesperado: " + e.getMessage());
         }
     }
+
+
+
 
 
 }

@@ -9,7 +9,6 @@ public record ProductCreateDto(
         @NotBlank String name,
         @NotBlank String description,
         @NotBlank List<String> imageUrlsProduct,
-        @NotBlank String imageUrlPrincipal,
         @NotBlank int quantity,
         @NotBlank double price,
         @NotBlank CategoriesEnum categoriesEnum,

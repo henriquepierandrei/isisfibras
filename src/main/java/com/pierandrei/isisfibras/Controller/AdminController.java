@@ -34,24 +34,24 @@ public class AdminController {
     @PutMapping("user/update/role/{id}")
     public ResponseEntity<String> updateRoleUser(@PathVariable(value = "id") UUID id,
                                                  @AuthenticationPrincipal UserModel userModel,
-                                                 @RequestBody RolesUsers rolesUsers) throws UserNotFoundException {
+                                                 @RequestParam RolesUsers rolesUsers) throws UserNotFoundException {
         // Verifica se o usuário tem a permissão de ADMIN
         if (!userModel.getRolesUsers().equals(RolesUsers.ADMIN)) {
+            System.out.println("aaaaaa");
             throw new UserNotUnauthorizedException("Você não está autorizado para isso!");
         }
 
-        Optional<UserModel> userModelOptional = this.adminService.getUser(id);
-        if (userModelOptional.isEmpty()) {
-            throw new UserNotFoundException("Usuário inexistente com o ID fornecido!");
-        }
+
+
+
 
         // Gera código de acesso se o novo papel não for "USUARIO"
         if (!RolesUsers.USUARIO.equals(rolesUsers)) {
-            this.adminService.generateCode(userModelOptional.get().getId());
+            this.adminService.generateCode(id);
         }
 
-        this.adminService.changeRole(userModelOptional.get().getId(), id, rolesUsers);
-        return ResponseEntity.ok("Usuário ID: " + userModelOptional.get().getId() + " foi atualizado para: " + rolesUsers + "!");
+        this.adminService.changeRole(userModel.getId(), id,  rolesUsers);
+        return ResponseEntity.ok("Usuário ID: " + id + " foi atualizado para: " + rolesUsers + "!");
     }
 
 
