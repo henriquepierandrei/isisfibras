@@ -33,7 +33,7 @@ public class LogisticsManagerService {
                 skuGeneration.append(String.valueOf(random.nextInt(10)));
             }
             skuGeneration.append("sku");
-        }while(!this.productRepository.existsBySku(skuGeneration.toString()));
+        }while(this.productRepository.existsBySku(skuGeneration.toString()));
         return skuGeneration.toString();
 
     }
@@ -42,7 +42,7 @@ public class LogisticsManagerService {
     // Cadastro de Produto
     public ProductCreateResponseDto productCreate(UserModel userModel, ProductCreateDto productCreateDto, String accessCode) throws Exception {
         // Verifica se o usuário tem a role adequada
-        if (userModel.getRolesUsers() != RolesUsers.GERENTE_LOGISTICO && !userModel.getAccessCode().equals(accessCode)) {
+        if (userModel.getRolesUsers() != RolesUsers.GERENTE_LOGISTICO || !userModel.getAccessCode().equals(accessCode)) {
             throw new UserNotUnauthorizedException("Você não está autorizado para adicionar um produto!");
         }
 

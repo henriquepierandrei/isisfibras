@@ -3,6 +3,7 @@ package com.pierandrei.isisfibras.Model.LogisticModels;
 import com.pierandrei.isisfibras.Enuns.CategoriesEnum;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -20,19 +21,21 @@ public class ProductsModel {
     @NotBlank
     private String description;  // Descrição detalhada do produto
 
-    @NotBlank
+    @NotNull
     private List<String> imagesUrls;  // URLs das imagens do produto
 
     private String imageUrlPrincipal;    // URL da imagem principal do produto
 
-    @NotBlank
+    @NotNull
     private int quantity;  // Quantidade disponível em estoque
 
-    @NotBlank
+    @NotNull
     private double price;  // Preço do produto
 
+    private int daysGuarantee;    // Dias de Garantia
 
-    @NotBlank
+
+    @NotNull
     @Enumerated(EnumType.STRING)
     private CategoriesEnum categoriesEnum;  // Categoria do produto
 
@@ -45,6 +48,7 @@ public class ProductsModel {
     private double averageRating=0;  // Média das avaliações de 1 a 5 estrelas
 
 
+    @NotNull
     private double shippingWeight;  // Peso usado para cálculo de frete
 
     private LocalDateTime createdAt;  // Data em que o produto foi adicionado ao sistema
