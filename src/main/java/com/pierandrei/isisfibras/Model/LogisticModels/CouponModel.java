@@ -8,7 +8,9 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -38,5 +40,6 @@ public class CouponModel {
 
     private double maxDiscountAmount;  // Valor máximo de desconto aplicável
 
-    private List<UUID> idUsersUsed;
+    @ElementCollection
+    private Set<UUID> idUsersUsed = new HashSet<>();  // Conjunto de IDs dos usuários que já usaram o cupom
 }

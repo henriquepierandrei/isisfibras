@@ -19,9 +19,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.attribute.UserPrincipalNotFoundException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
@@ -163,45 +166,55 @@ public class UserService {
     }
 
 
-    // Obter Valor final do Pedido com o Cupom
-    public Double valueFinalWithCoupon(UUID idUser, String couponCode, double allValue){
-        Optional<CouponModel> couponModelOptional = this.couponRepository.findByCode(couponCode);
-        if (couponModelOptional.isEmpty()){
-            throw new CouponNotExistsException("Cupom indisponível!");
+    public String calculateFinalValueWithCoupon(UUID userId, String couponCode, double orderTotal) {
+        // Busca o cupom pelo código fornecido
+        CouponModel coupon = couponRepository.findByCode(couponCode)
+                .orElseThrow(() -> new CouponNotExistsException("Cupom indisponível!"));
+
+        // Valida se o cupom está ativo e se já expirou ou atingiu o limite
+        validateCouponAvailability(coupon, userId);
+
+        // Verifica se o valor do pedido atinge o mínimo necessário para aplicar o cupom
+        if (orderTotal < coupon.getMinimumAmount()) {
+            throw new CouponException("O valor do pedido é abaixo do esperado para esse Cupom!");
         }
 
-        int usersUsed = 0;
-
-        for(UUID id : couponModelOptional.get().getIdUsersUsed()){
-            usersUsed+=1;
-            if (id.equals(idUser) && couponModelOptional.get().isSingleUse()){
-                throw new UserUnauthorizedException("Este cupom já foi usado!");
-            }
-
-            if (usersUsed == couponModelOptional.get().getUsageLimit() || couponModelOptional.get().getExpirationDate().isEqual(LocalDate.now())){
-                throw new CouponException("Cupom já expirado para uso!");
-            }
+        // Calcula o desconto e o valor final
+        double discountAmount = orderTotal * (coupon.getValuePerCentDiscount() / 100.0);
+        if (discountAmount > coupon.getMaxDiscountAmount()) {
+            throw new CouponException("O valor do desconto ultrapassa o limite determinado do cupom!");
         }
+        double finalValue = orderTotal - discountAmount;
 
-        double valueWithCoupon = 0;
-
-        if (allValue < couponModelOptional.get().getMinimumAmount()){
-            throw new CouponException("O valor do pedido é abaixo do esperado para esse Cupom!")
-        }
-
-        int percent = couponModelOptional.get().getValuePerCentDiscount() / 100;
-        double operation = allValue * percent;
-        double finalValue = allValue - operation;
-
-
-        if (finalValue > couponModelOptional.get().getMaxDiscountAmount()){
-           throw new CouponException("O valor do desconto ultrapassa o limite determinado do cupom!");
-        }
-
-
-
-
+        // Formata o valor final com número fixo de casas decimais
+        return formatFinalValue(finalValue);
     }
+
+    private void validateCouponAvailability(CouponModel coupon, UUID userId) {
+        if (!coupon.isCouponActive()) {
+            throw new CouponException("Cupom desativado.");
+        }
+
+        // Verifica se o cupom é de uso único e já foi usado pelo usuário
+        if (coupon.isSingleUse() && coupon.getIdUsersUsed().contains(userId)) {
+            throw new UserUnauthorizedException("Este cupom já foi usado por este usuário!");
+        }
+
+        // Verifica se o cupom atingiu o limite de uso ou está expirado
+        boolean hasUsageLimitExceeded = coupon.getIdUsersUsed().size() >= coupon.getUsageLimit();
+        boolean hasExpired = coupon.getExpirationDate().isBefore(LocalDate.now());
+        if (hasUsageLimitExceeded || hasExpired) {
+            throw new CouponException("Cupom expirado ou limite de uso atingido!");
+        }
+    }
+
+    private static final DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
+
+    private String formatFinalValue(double value) {
+        return decimalFormat.format(value);
+    }
+
+
 
 
 
