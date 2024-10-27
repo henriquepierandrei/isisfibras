@@ -83,10 +83,6 @@ public class UserService {
 
 
 
-
-
-
-
     // Adicionar telefone à conta
     public String addPhoneForUser(String code, UUID idUser) throws UserPrincipalNotFoundException, CodeNotExistsException, PhoneExistsException {
         Optional<UserModel> userModelOpt = this.userRepository.findById(idUser);
@@ -162,6 +158,12 @@ public class UserService {
         // Envia o código por SMS
         this.twilioService.sendMessage(phone, "Código de Verificação: " + stringBuilder.toString());
         return "Código enviado!";
+    }
+
+
+    // Obter Valor final do Pedido com o Cupom
+    public Double valueFinalWithCoupon(String cuponCode){
+
     }
 
 

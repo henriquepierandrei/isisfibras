@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -16,6 +17,7 @@ import java.util.UUID;
 
 @Entity
 @Data
+@Builder
 public class UserModel {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -62,13 +64,7 @@ public class UserModel {
     private LocalDateTime codeGeneratedAt;
     private String possiblePhone;
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_coupon",  // Nome da tabela de junção
-            joinColumns = @JoinColumn(name = "user_id"),  // Coluna que referencia UserModel
-            inverseJoinColumns = @JoinColumn(name = "coupon_code")  // Coluna que referencia CouponModel
-    )
-    private List<CouponModel> couponModels;
+
 
     
 

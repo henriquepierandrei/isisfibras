@@ -165,21 +165,38 @@ public class AdminService {
     }
 
 
-
-    // Criar Cupom
+    // Criação do Cupom
     public CouponCreateResponse createCoupon(CouponCreateDto couponCreateDto) throws CouponExistsException {
-        if (this.couponRepository.existsByCode(couponCreateDto.couponCode())){
-            throw new CouponExistsException("Este Cupom já existe!");
+        // Verifica se o cupom já existe
+        if (couponRepository.existsByCode(couponCreateDto.couponCode())) {
+            throw new CouponExistsException("Este cupom já existe!");
         }
 
-        CouponModel couponModel = new CouponModel();
+        // Cria o modelo do cupom a partir dos dados do DTO
+        CouponModel couponModel = CouponModel.builder()
+                .createdAt(LocalDateTime.now())
+                .couponActive(couponCreateDto.couponActive())
+                .code(couponCreateDto.couponCode().toUpperCase())
+                .description(couponCreateDto.description())
+                .expirationDate(couponCreateDto.expirationDate())
+                .maxDiscountAmount(couponCreateDto.maxDiscountAmount())
+                .minimumAmount(couponCreateDto.minimumAmount())
+                .singleUse(couponCreateDto.singleUse())
+                .valuePerCentDiscount(couponCreateDto.valuePerCentDiscount())
+                .usageLimit(couponCreateDto.usageLimit())
+                .freeShipping(couponCreateDto.freeShipping())
+                .build();
 
-        if (couponCreateDto.freeShipping()){
-            
-        }
+        couponRepository.save(couponModel);
 
-
+        // Retorna a resposta de criação do cupom
+        return new CouponCreateResponse(
+                couponCreateDto.couponCode(),
+                couponCreateDto.description(),
+                String.format("Cupom '%s' criado com sucesso!", couponCreateDto.couponCode())
+        );
     }
+
 
 
 

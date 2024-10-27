@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public record CouponCreateDto(
         String couponCode,
-        String name,
+        String description,
         double valuePerCentDiscount,
         boolean freeShipping,
         double minimumAmount,
@@ -12,6 +12,5 @@ public record CouponCreateDto(
         LocalDateTime expirationDate,
         int usageLimit,
         boolean singleUse,
-        LocalDateTime createdAt,
         double maxDiscountAmount
 ) {}

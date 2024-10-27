@@ -3,17 +3,21 @@ package com.pierandrei.isisfibras.Model.LogisticModels;
 import com.pierandrei.isisfibras.Model.UserModels.UserModel;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Data
+@Builder
 public class CouponModel {
     @Id
     private String code;
 
+    private String description;    // Descrição do cupom
 
     private double valuePerCentDiscount;  // Valor percentual de desconto (0 a 100)
 
@@ -33,6 +37,5 @@ public class CouponModel {
 
     private double maxDiscountAmount;  // Valor máximo de desconto aplicável
 
-    @ManyToMany(mappedBy = "couponModels")
-    private List<UserModel> users;
+    private List<UUID> idUsersUsed;
 }
