@@ -2,8 +2,8 @@ package com.pierandrei.isisfibras.Exception.AuthExceptions;
 
 import org.springframework.security.core.AuthenticationException;
 
-public class UserNotUnauthorizedException extends AuthenticationException {
-    public UserNotUnauthorizedException(final String msg) {
+public class UserUnauthorizedException extends AuthenticationException {
+    public UserUnauthorizedException(final String msg) {
         super(msg);
     }
 }

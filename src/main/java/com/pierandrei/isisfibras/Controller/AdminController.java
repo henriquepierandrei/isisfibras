@@ -3,7 +3,7 @@ package com.pierandrei.isisfibras.Controller;
 import com.pierandrei.isisfibras.Dto.Admin.UserResponse;
 import com.pierandrei.isisfibras.Enuns.RolesUsers;
 import com.pierandrei.isisfibras.Exception.AuthExceptions.UserNotFoundException;
-import com.pierandrei.isisfibras.Exception.AuthExceptions.UserNotUnauthorizedException;
+import com.pierandrei.isisfibras.Exception.AuthExceptions.UserUnauthorizedException;
 import com.pierandrei.isisfibras.Model.UserModels.UserModel;
 import com.pierandrei.isisfibras.Service.AdminServices.AdminService;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +35,7 @@ public class AdminController {
                                                  @RequestParam RolesUsers rolesUsers) throws UserNotFoundException {
         // Verifica se o usuário tem a permissão de ADMIN
         if (!userModel.getRolesUsers().equals(RolesUsers.ADMIN)) {
-            throw new UserNotUnauthorizedException("Você não está autorizado para isso!");
+            throw new UserUnauthorizedException("Você não está autorizado para isso!");
         }
 
         // Gera código de acesso se o novo papel não for "USUARIO"

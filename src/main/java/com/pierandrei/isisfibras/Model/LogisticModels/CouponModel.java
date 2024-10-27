@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -19,7 +20,7 @@ public class CouponModel {
 
     private String description;    // Descrição do cupom
 
-    private double valuePerCentDiscount;  // Valor percentual de desconto (0 a 100)
+    private int valuePerCentDiscount;  // Valor percentual de desconto (0 a 100)
 
     private boolean freeShipping;  // Indica se o frete é gratuito
 
@@ -27,7 +28,7 @@ public class CouponModel {
 
     private boolean couponActive;  // Indica se o cupom está ativo ou não
 
-    private LocalDateTime expirationDate;  // Data de expiração do cupom
+    private LocalDate expirationDate;  // Data de expiração do cupom
 
     private int usageLimit;  // Número máximo de usos do cupom
 

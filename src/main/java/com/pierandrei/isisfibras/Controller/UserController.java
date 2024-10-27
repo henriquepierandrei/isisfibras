@@ -4,7 +4,7 @@ import com.pierandrei.isisfibras.Exception.AuthExceptions.CodeNotExistsException
 import com.pierandrei.isisfibras.Exception.AuthExceptions.PhoneExistsException;
 import com.pierandrei.isisfibras.Exception.AuthExceptions.PhoneNotFoundException;
 import com.pierandrei.isisfibras.Exception.LogistcsExceptions.ProductNotAvailableException;
-import com.pierandrei.isisfibras.Exception.AuthExceptions.UserNotUnauthorizedException;
+import com.pierandrei.isisfibras.Exception.AuthExceptions.UserUnauthorizedException;
 import com.pierandrei.isisfibras.Model.UserModels.UserModel;
 import com.pierandrei.isisfibras.Service.UserServices.UserService;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +32,7 @@ public class UserController {
             String message = service.addProductInCart(userModel, sku, quantity);
 
             return ResponseEntity.ok(message); // Retorna uma resposta 200 OK com a mensagem de sucesso
-        } catch (UserNotUnauthorizedException e) {
+        } catch (UserUnauthorizedException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         } catch (ProductNotAvailableException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

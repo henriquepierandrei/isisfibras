@@ -7,7 +7,7 @@ import com.pierandrei.isisfibras.Dto.Admin.UserResponse;
 import com.pierandrei.isisfibras.Enuns.RolesUsers;
 import com.pierandrei.isisfibras.Exception.AuthExceptions.UserNotFoundException;
 import com.pierandrei.isisfibras.Exception.LogistcsExceptions.CouponExistsException;
-import com.pierandrei.isisfibras.Exception.AuthExceptions.UserNotUnauthorizedException;
+import com.pierandrei.isisfibras.Exception.AuthExceptions.UserUnauthorizedException;
 import com.pierandrei.isisfibras.Model.Historic.RoleHistoricChange;
 import com.pierandrei.isisfibras.Model.LogisticModels.CouponModel;
 import com.pierandrei.isisfibras.Model.UserModels.UserModel;
@@ -93,7 +93,7 @@ public class AdminService {
             roleHistoricChange.setIdAdminOwnerChange(idAdmin);
             this.roleHistoricChangeRepository.save(roleHistoricChange);
         } else {
-            throw new UserNotUnauthorizedException("Você não tem permissão para alteração!");
+            throw new UserUnauthorizedException("Você não tem permissão para alteração!");
         }
 
         return "Posição mudada para: " + rolesUsers;
@@ -117,7 +117,7 @@ public class AdminService {
 
         // Verifica se o administrador tem a permissão para deletar
         if (adminModelOptional.get().getRolesUsers() != RolesUsers.ADMIN) {
-            throw new UserNotUnauthorizedException("Você não tem permissão para deletar usuários!");
+            throw new UserUnauthorizedException("Você não tem permissão para deletar usuários!");
         }
 
         // Realiza a deleção

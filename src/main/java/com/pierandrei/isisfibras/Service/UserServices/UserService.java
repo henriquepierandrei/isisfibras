@@ -4,22 +4,23 @@ import com.pierandrei.isisfibras.Exception.AuthExceptions.CodeNotExistsException
 import com.pierandrei.isisfibras.Exception.AuthExceptions.PhoneExistsException;
 import com.pierandrei.isisfibras.Exception.AuthExceptions.PhoneNotFoundException;
 import com.pierandrei.isisfibras.Exception.AuthExceptions.TimeLimitOfGenerationException;
+import com.pierandrei.isisfibras.Exception.LogistcsExceptions.CouponException;
+import com.pierandrei.isisfibras.Exception.LogistcsExceptions.CouponNotExistsException;
 import com.pierandrei.isisfibras.Exception.LogistcsExceptions.ProductNotAvailableException;
-import com.pierandrei.isisfibras.Exception.AuthExceptions.UserNotUnauthorizedException;
+import com.pierandrei.isisfibras.Exception.AuthExceptions.UserUnauthorizedException;
+import com.pierandrei.isisfibras.Model.LogisticModels.CouponModel;
 import com.pierandrei.isisfibras.Model.LogisticModels.ProductsModel;
 import com.pierandrei.isisfibras.Model.UserModels.CartItems;
 import com.pierandrei.isisfibras.Model.UserModels.CartModel;
 import com.pierandrei.isisfibras.Model.UserModels.UserModel;
-import com.pierandrei.isisfibras.Repository.CartItemsRepository;
-import com.pierandrei.isisfibras.Repository.CartRepository;
-import com.pierandrei.isisfibras.Repository.ProductRepository;
-import com.pierandrei.isisfibras.Repository.UserRepository;
+import com.pierandrei.isisfibras.Repository.*;
 import com.pierandrei.isisfibras.Service.MessageSenderService.TwilioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Random;
@@ -31,13 +32,14 @@ public class UserService {
     private final ProductRepository productRepository;
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
+    private final CouponRepository couponRepository;
     private final CartItemsRepository cartItemsRepository;
     private final TwilioService twilioService;
 
     // Adicionar produto no carrinho de compras
-    public String addProductInCart(UserModel userModel, String skuProduct, int quantity) throws ProductNotAvailableException, UserNotUnauthorizedException {
+    public String addProductInCart(UserModel userModel, String skuProduct, int quantity) throws ProductNotAvailableException, UserUnauthorizedException {
         if (userModel == null) {
-            throw new UserNotUnauthorizedException("Você não possui nenhuma conta logada!");
+            throw new UserUnauthorizedException("Você não possui nenhuma conta logada!");
         }
 
         // Verificar se o produto está disponível
@@ -162,7 +164,42 @@ public class UserService {
 
 
     // Obter Valor final do Pedido com o Cupom
-    public Double valueFinalWithCoupon(String cuponCode){
+    public Double valueFinalWithCoupon(UUID idUser, String couponCode, double allValue){
+        Optional<CouponModel> couponModelOptional = this.couponRepository.findByCode(couponCode);
+        if (couponModelOptional.isEmpty()){
+            throw new CouponNotExistsException("Cupom indisponível!");
+        }
+
+        int usersUsed = 0;
+
+        for(UUID id : couponModelOptional.get().getIdUsersUsed()){
+            usersUsed+=1;
+            if (id.equals(idUser) && couponModelOptional.get().isSingleUse()){
+                throw new UserUnauthorizedException("Este cupom já foi usado!");
+            }
+
+            if (usersUsed == couponModelOptional.get().getUsageLimit() || couponModelOptional.get().getExpirationDate().isEqual(LocalDate.now())){
+                throw new CouponException("Cupom já expirado para uso!");
+            }
+        }
+
+        double valueWithCoupon = 0;
+
+        if (allValue < couponModelOptional.get().getMinimumAmount()){
+            throw new CouponException("O valor do pedido é abaixo do esperado para esse Cupom!")
+        }
+
+        int percent = couponModelOptional.get().getValuePerCentDiscount() / 100;
+        double operation = allValue * percent;
+        double finalValue = allValue - operation;
+
+
+        if (finalValue > couponModelOptional.get().getMaxDiscountAmount()){
+           throw new CouponException("O valor do desconto ultrapassa o limite determinado do cupom!");
+        }
+
+
+
 
     }
 

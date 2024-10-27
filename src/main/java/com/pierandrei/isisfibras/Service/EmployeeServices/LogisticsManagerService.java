@@ -6,7 +6,7 @@ import com.pierandrei.isisfibras.Dto.LogistcsAndEmployeeDto.ProductDeleteRespons
 import com.pierandrei.isisfibras.Dto.LogistcsAndEmployeeDto.ProductUpdateDto;
 import com.pierandrei.isisfibras.Enuns.RolesUsers;
 import com.pierandrei.isisfibras.Exception.LogistcsExceptions.ProductNotAvailableException;
-import com.pierandrei.isisfibras.Exception.AuthExceptions.UserNotUnauthorizedException;
+import com.pierandrei.isisfibras.Exception.AuthExceptions.UserUnauthorizedException;
 import com.pierandrei.isisfibras.Model.LogisticModels.ProductsModel;
 import com.pierandrei.isisfibras.Model.UserModels.UserModel;
 import com.pierandrei.isisfibras.Repository.ProductRepository;
@@ -44,7 +44,7 @@ public class LogisticsManagerService {
     public ProductCreateResponseDto productCreate(UserModel userModel, ProductCreateDto productCreateDto, String accessCode) throws Exception {
         // Verifica se o usuário tem a role adequada
         if (userModel.getRolesUsers() != RolesUsers.GERENTE_LOGISTICO || !userModel.getAccessCode().equals(accessCode)) {
-            throw new UserNotUnauthorizedException("Você não está autorizado para adicionar um produto!");
+            throw new UserUnauthorizedException("Você não está autorizado para adicionar um produto!");
         }
 
         try {
@@ -88,7 +88,7 @@ public class LogisticsManagerService {
     public ProductCreateResponseDto productUpdate(UserModel userModel, ProductUpdateDto productUpdateDto, String accessCode) throws ProductNotAvailableException {
         // Verifica se o usuário tem a role adequada
         if (userModel.getRolesUsers() != RolesUsers.GERENTE_LOGISTICO && !userModel.getAccessCode().equals(accessCode)) {
-            throw new UserNotUnauthorizedException("Você não está autorizado para atualizar um produto!");
+            throw new UserUnauthorizedException("Você não está autorizado para atualizar um produto!");
         }
 
         Optional<ProductsModel> model = this.productRepository.findBySku(productUpdateDto.sku());
@@ -136,7 +136,7 @@ public class LogisticsManagerService {
     public ProductDeleteResponse productDelete(UserModel userModel, String sku, String accessCode) throws ProductNotAvailableException {
         // Verifica se o usuário tem a role adequada
         if (userModel.getRolesUsers() != RolesUsers.GERENTE_LOGISTICO && !userModel.getAccessCode().equals(accessCode)) {
-            throw new UserNotUnauthorizedException("Você não está autorizado para remover um produto!");
+            throw new UserUnauthorizedException("Você não está autorizado para remover um produto!");
         }
 
         Optional<ProductsModel> model = this.productRepository.findBySku(sku);

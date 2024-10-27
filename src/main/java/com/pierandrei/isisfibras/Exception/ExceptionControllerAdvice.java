@@ -1,8 +1,9 @@
 package com.pierandrei.isisfibras.Exception;
 
 import com.pierandrei.isisfibras.Exception.AuthExceptions.UserNotFoundException;
-import com.pierandrei.isisfibras.Exception.AuthExceptions.UserNotUnauthorizedException;
+import com.pierandrei.isisfibras.Exception.AuthExceptions.UserUnauthorizedException;
 import com.pierandrei.isisfibras.Exception.LogistcsExceptions.CouponExistsException;
+import com.pierandrei.isisfibras.Exception.LogistcsExceptions.CouponNotExistsException;
 import com.pierandrei.isisfibras.Exception.LogistcsExceptions.ProductNotAvailableException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -35,8 +36,8 @@ public class ExceptionControllerAdvice {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
-    @ExceptionHandler(UserNotUnauthorizedException.class)
-    public ResponseEntity<Map<String, String>> handleUserNotUnauthorizedException(UserNotUnauthorizedException ex) {
+    @ExceptionHandler(UserUnauthorizedException.class)
+    public ResponseEntity<Map<String, String>> handleUserNotUnauthorizedException(UserUnauthorizedException ex) {
         Map<String, String> error = new HashMap<>();
         error.put("error", ex.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
@@ -69,6 +70,15 @@ public class ExceptionControllerAdvice {
         error.put("error", ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
+
+    @ExceptionHandler(CouponNotExistsException.class)
+    public ResponseEntity<Map<String, String>> handleCouponNotExistsExceptionException(CouponNotExistsException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+
 
 
 }
