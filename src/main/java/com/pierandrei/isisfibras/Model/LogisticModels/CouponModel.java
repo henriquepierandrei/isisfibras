@@ -1,21 +1,19 @@
 package com.pierandrei.isisfibras.Model.LogisticModels;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.pierandrei.isisfibras.Model.UserModels.UserModel;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
 public class CouponModel {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private String code;
 
-    private String name;  // Nome descritivo do cupom
 
     private double valuePerCentDiscount;  // Valor percentual de desconto (0 a 100)
 
@@ -34,4 +32,7 @@ public class CouponModel {
     private LocalDateTime createdAt;  // Data de criação do cupom
 
     private double maxDiscountAmount;  // Valor máximo de desconto aplicável
+
+    @ManyToMany(mappedBy = "couponModels")
+    private List<UserModel> users;
 }

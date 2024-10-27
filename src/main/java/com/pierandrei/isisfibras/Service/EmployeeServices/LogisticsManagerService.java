@@ -6,7 +6,7 @@ import com.pierandrei.isisfibras.Dto.LogistcsAndEmployeeDto.ProductDeleteRespons
 import com.pierandrei.isisfibras.Dto.LogistcsAndEmployeeDto.ProductUpdateDto;
 import com.pierandrei.isisfibras.Enuns.RolesUsers;
 import com.pierandrei.isisfibras.Exception.LogistcsExceptions.ProductNotAvailableException;
-import com.pierandrei.isisfibras.Exception.UserNotUnauthorizedException;
+import com.pierandrei.isisfibras.Exception.AuthExceptions.UserNotUnauthorizedException;
 import com.pierandrei.isisfibras.Model.LogisticModels.ProductsModel;
 import com.pierandrei.isisfibras.Model.UserModels.UserModel;
 import com.pierandrei.isisfibras.Repository.ProductRepository;

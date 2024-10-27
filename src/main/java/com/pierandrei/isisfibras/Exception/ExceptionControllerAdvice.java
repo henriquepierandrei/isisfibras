@@ -1,8 +1,9 @@
-package com.pierandrei.isisfibras.Exception.AuthExceptions;
+package com.pierandrei.isisfibras.Exception;
 
+import com.pierandrei.isisfibras.Exception.AuthExceptions.UserNotFoundException;
+import com.pierandrei.isisfibras.Exception.AuthExceptions.UserNotUnauthorizedException;
+import com.pierandrei.isisfibras.Exception.LogistcsExceptions.CouponExistsException;
 import com.pierandrei.isisfibras.Exception.LogistcsExceptions.ProductNotAvailableException;
-import com.pierandrei.isisfibras.Exception.UserNotUnauthorizedException;
-import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -60,6 +61,13 @@ public class ExceptionControllerAdvice {
         Map<String, String> error = new HashMap<>();
         error.put("error", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    @ExceptionHandler(CouponExistsException.class)
+    public ResponseEntity<Map<String, String>> handleCouponExistsExceptionException(CouponExistsException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
 

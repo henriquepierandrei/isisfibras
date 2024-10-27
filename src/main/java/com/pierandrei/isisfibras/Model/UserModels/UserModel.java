@@ -1,6 +1,7 @@
 package com.pierandrei.isisfibras.Model.UserModels;
 
 import com.pierandrei.isisfibras.Enuns.RolesUsers;
+import com.pierandrei.isisfibras.Model.LogisticModels.CouponModel;
 import com.pierandrei.isisfibras.Model.LogisticModels.OrdersModel;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -61,9 +62,21 @@ public class UserModel {
     private LocalDateTime codeGeneratedAt;
     private String possiblePhone;
 
+    @ManyToMany
+    @JoinTable(
+            name = "user_coupon",  // Nome da tabela de junção
+            joinColumns = @JoinColumn(name = "user_id"),  // Coluna que referencia UserModel
+            inverseJoinColumns = @JoinColumn(name = "coupon_code")  // Coluna que referencia CouponModel
+    )
+    private List<CouponModel> couponModels;
+
+    
+
 
 
     private String accessCode;    // Código de acesso, não utilizado quando o usuário não faz parte da equipe, (ROLE_USER).
+
+
 
     @Enumerated(EnumType.STRING)
     private RolesUsers rolesUsers;

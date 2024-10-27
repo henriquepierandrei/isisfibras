@@ -4,15 +4,12 @@ import com.pierandrei.isisfibras.Exception.AuthExceptions.CodeNotExistsException
 import com.pierandrei.isisfibras.Exception.AuthExceptions.PhoneExistsException;
 import com.pierandrei.isisfibras.Exception.AuthExceptions.PhoneNotFoundException;
 import com.pierandrei.isisfibras.Exception.LogistcsExceptions.ProductNotAvailableException;
-import com.pierandrei.isisfibras.Exception.UserNotUnauthorizedException;
+import com.pierandrei.isisfibras.Exception.AuthExceptions.UserNotUnauthorizedException;
 import com.pierandrei.isisfibras.Model.UserModels.UserModel;
-import com.pierandrei.isisfibras.Service.MessageSenderService.EmailService;
-import com.pierandrei.isisfibras.Service.MessageSenderService.TwilioService;
 import com.pierandrei.isisfibras.Service.UserServices.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 

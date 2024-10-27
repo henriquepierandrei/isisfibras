@@ -1,12 +1,17 @@
 package com.pierandrei.isisfibras.Service.AdminServices;
 
+import com.pierandrei.isisfibras.Dto.Admin.CouponCreateDto;
+import com.pierandrei.isisfibras.Dto.Admin.CouponCreateResponse;
 import com.pierandrei.isisfibras.Dto.Admin.PaginatedUsersResponse;
 import com.pierandrei.isisfibras.Dto.Admin.UserResponse;
 import com.pierandrei.isisfibras.Enuns.RolesUsers;
 import com.pierandrei.isisfibras.Exception.AuthExceptions.UserNotFoundException;
-import com.pierandrei.isisfibras.Exception.UserNotUnauthorizedException;
+import com.pierandrei.isisfibras.Exception.LogistcsExceptions.CouponExistsException;
+import com.pierandrei.isisfibras.Exception.AuthExceptions.UserNotUnauthorizedException;
 import com.pierandrei.isisfibras.Model.Historic.RoleHistoricChange;
+import com.pierandrei.isisfibras.Model.LogisticModels.CouponModel;
 import com.pierandrei.isisfibras.Model.UserModels.UserModel;
+import com.pierandrei.isisfibras.Repository.CouponRepository;
 import com.pierandrei.isisfibras.Repository.RoleHistoricChangeRepository;
 import com.pierandrei.isisfibras.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +33,7 @@ import java.util.stream.Collectors;
 public class AdminService {
     private final UserRepository userRepository;
     private final RoleHistoricChangeRepository roleHistoricChangeRepository;
+    private final CouponRepository couponRepository;
 
 
     // Gerar código de acesso
@@ -161,7 +167,17 @@ public class AdminService {
 
 
     // Criar Cupom
-    public CouponCreateResponse createCoupon(){
+    public CouponCreateResponse createCoupon(CouponCreateDto couponCreateDto) throws CouponExistsException {
+        if (this.couponRepository.existsByCode(couponCreateDto.couponCode())){
+            throw new CouponExistsException("Este Cupom já existe!");
+        }
+
+        CouponModel couponModel = new CouponModel();
+
+        if (couponCreateDto.freeShipping()){
+            
+        }
+
 
     }
 
