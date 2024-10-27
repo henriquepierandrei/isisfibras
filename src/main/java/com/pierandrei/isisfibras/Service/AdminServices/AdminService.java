@@ -172,9 +172,12 @@ public class AdminService {
             throw new CouponExistsException("Este cupom já existe!");
         }
 
-        // Cria o modelo do cupom a partir dos dados do DTO
+        // Armazena a data de criação para evitar múltiplas chamadas
+        LocalDateTime createdAt = LocalDateTime.now();
+
+        // Cria o modelo do cupom, definindo freeShipping conforme o DTO
         CouponModel couponModel = CouponModel.builder()
-                .createdAt(LocalDateTime.now())
+                .createdAt(createdAt)
                 .couponActive(couponCreateDto.couponActive())
                 .code(couponCreateDto.couponCode().toUpperCase())
                 .description(couponCreateDto.description())
@@ -187,6 +190,7 @@ public class AdminService {
                 .freeShipping(couponCreateDto.freeShipping())
                 .build();
 
+        // Salva o cupom no repositório
         couponRepository.save(couponModel);
 
         // Retorna a resposta de criação do cupom
@@ -196,6 +200,7 @@ public class AdminService {
                 String.format("Cupom '%s' criado com sucesso!", couponCreateDto.couponCode())
         );
     }
+
 
 
 

@@ -1,9 +1,12 @@
 package com.pierandrei.isisfibras.Controller;
 
+import com.pierandrei.isisfibras.Dto.Admin.CouponCreateDto;
+import com.pierandrei.isisfibras.Dto.Admin.CouponCreateResponse;
 import com.pierandrei.isisfibras.Dto.Admin.UserResponse;
 import com.pierandrei.isisfibras.Enuns.RolesUsers;
 import com.pierandrei.isisfibras.Exception.AuthExceptions.UserNotFoundException;
 import com.pierandrei.isisfibras.Exception.AuthExceptions.UserUnauthorizedException;
+import com.pierandrei.isisfibras.Exception.LogistcsExceptions.CouponExistsException;
 import com.pierandrei.isisfibras.Model.UserModels.UserModel;
 import com.pierandrei.isisfibras.Service.AdminServices.AdminService;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +52,12 @@ public class AdminController {
 
 
 
+    // Criar um Cupom
+    public ResponseEntity<CouponCreateResponse> createCoupon(@AuthenticationPrincipal UserModel userModel,
+                                                             @RequestBody CouponCreateDto couponCreateDto) throws CouponExistsException {
+        CouponCreateResponse couponCreateResponse = this.adminService.createCoupon(couponCreateDto);
+        return ResponseEntity.ok(couponCreateResponse);
+    }
 
 
 

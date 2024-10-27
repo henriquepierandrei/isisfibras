@@ -1,5 +1,6 @@
 package com.pierandrei.isisfibras.Service.UserServices;
 
+import com.pierandrei.isisfibras.Dto.Admin.CouponResponse;
 import com.pierandrei.isisfibras.Exception.AuthExceptions.CodeNotExistsException;
 import com.pierandrei.isisfibras.Exception.AuthExceptions.PhoneExistsException;
 import com.pierandrei.isisfibras.Exception.AuthExceptions.PhoneNotFoundException;
@@ -166,7 +167,8 @@ public class UserService {
     }
 
 
-    public String calculateFinalValueWithCoupon(UUID userId, String couponCode, double orderTotal) {
+    // Calcula o valor final com o cupom
+    public CouponResponse calculateFinalValueWithCoupon(UUID userId, String couponCode, double orderTotal) {
         // Busca o cupom pelo código fornecido
         CouponModel coupon = couponRepository.findByCode(couponCode)
                 .orElseThrow(() -> new CouponNotExistsException("Cupom indisponível!"));
@@ -179,6 +181,11 @@ public class UserService {
             throw new CouponException("O valor do pedido é abaixo do esperado para esse Cupom!");
         }
 
+        // Verifica se é frete grátis
+        if (coupon.isFreeShipping()){
+            return new CouponResponse(null, true);
+        }
+
         // Calcula o desconto e o valor final
         double discountAmount = orderTotal * (coupon.getValuePerCentDiscount() / 100.0);
         if (discountAmount > coupon.getMaxDiscountAmount()) {
@@ -187,9 +194,10 @@ public class UserService {
         double finalValue = orderTotal - discountAmount;
 
         // Formata o valor final com número fixo de casas decimais
-        return formatFinalValue(finalValue);
+        return new CouponResponse(formatFinalValue(finalValue), false);
     }
 
+    // Valida o cupom
     private void validateCouponAvailability(CouponModel coupon, UUID userId) {
         if (!coupon.isCouponActive()) {
             throw new CouponException("Cupom desativado.");
@@ -207,12 +215,13 @@ public class UserService {
             throw new CouponException("Cupom expirado ou limite de uso atingido!");
         }
     }
-
     private static final DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
-
     private String formatFinalValue(double value) {
         return decimalFormat.format(value);
     }
+
+
+
 
 
 
