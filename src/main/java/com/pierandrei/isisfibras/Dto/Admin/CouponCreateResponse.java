@@ -3,7 +3,7 @@ package com.pierandrei.isisfibras.Dto.Admin;
 public record CouponCreateResponse(
         String code,
         String description,
-        String message,
-        boolean freeShipping
+        boolean freeShipping,
+        String message
 ) {
 }

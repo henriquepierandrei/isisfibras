@@ -197,8 +197,10 @@ public class AdminService {
         return new CouponCreateResponse(
                 couponCreateDto.couponCode(),
                 couponCreateDto.description(),
-                String.format("Cupom '%s' criado com sucesso!", couponCreateDto.couponCode())
-        );
+                couponModel.isFreeShipping(),
+                String.format("Cupom '%s' criado com sucesso!", couponCreateDto.couponCode()
+
+        ));
     }
 
 
